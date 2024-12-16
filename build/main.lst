@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 1
 
 
    1              		.cpu cortex-m4
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
   47              		.section	.rodata
   48              		.align	2
   49              	.LC0:
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 2
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 2
 
 
   50 0000 54657361 		.ascii	"Tesao no pino adc %d mV\015\012\000"
@@ -66,1026 +66,998 @@ ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
   50      2070696E 
   50      6F206164 
   50      63202564 
-  51              		.section	.text.main,"ax",%progbits
-  52              		.align	1
-  53              		.global	main
-  54              		.syntax unified
-  55              		.thumb
-  56              		.thumb_func
-  58              	main:
-  59              	.LFB220:
-  60              		.file 1 "Core/Src/main.c"
-   1:Core/Src/main.c **** /* USER CODE BEGIN Header */
-   2:Core/Src/main.c **** /**
-   3:Core/Src/main.c ****   ******************************************************************************
-   4:Core/Src/main.c ****   * @file           : main.c
-   5:Core/Src/main.c ****   * @brief          : Main program body
-   6:Core/Src/main.c ****   ******************************************************************************
-   7:Core/Src/main.c ****   * @attention
-   8:Core/Src/main.c ****   *
-   9:Core/Src/main.c ****   * Copyright (c) 2024 STMicroelectronics.
-  10:Core/Src/main.c ****   * All rights reserved.
-  11:Core/Src/main.c ****   *
-  12:Core/Src/main.c ****   * This software is licensed under terms that can be found in the LICENSE file
-  13:Core/Src/main.c ****   * in the root directory of this software component.
-  14:Core/Src/main.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
-  15:Core/Src/main.c ****   *
-  16:Core/Src/main.c ****   ******************************************************************************
-  17:Core/Src/main.c ****   */
-  18:Core/Src/main.c **** /* USER CODE END Header */
-  19:Core/Src/main.c **** /* Includes ------------------------------------------------------------------*/
-  20:Core/Src/main.c **** #include "main.h"
-  21:Core/Src/main.c **** #include "usb_device.h"
-  22:Core/Src/main.c **** uint8_t buffer[255];
-  23:Core/Src/main.c **** uint8_t gUSB[255];
-  24:Core/Src/main.c **** /* Private includes ----------------------------------------------------------*/
-  25:Core/Src/main.c **** /* USER CODE BEGIN Includes */
-  26:Core/Src/main.c **** 
-  27:Core/Src/main.c **** /* USER CODE END Includes */
-  28:Core/Src/main.c **** 
-  29:Core/Src/main.c **** /* Private typedef -----------------------------------------------------------*/
-  30:Core/Src/main.c **** /* USER CODE BEGIN PTD */
-  31:Core/Src/main.c **** 
-  32:Core/Src/main.c **** /* USER CODE END PTD */
-  33:Core/Src/main.c **** 
-  34:Core/Src/main.c **** /* Private define ------------------------------------------------------------*/
-  35:Core/Src/main.c **** /* USER CODE BEGIN PD */
-  36:Core/Src/main.c **** 
-  37:Core/Src/main.c **** /* USER CODE END PD */
-  38:Core/Src/main.c **** 
-  39:Core/Src/main.c **** /* Private macro -------------------------------------------------------------*/
-  40:Core/Src/main.c **** /* USER CODE BEGIN PM */
-  41:Core/Src/main.c **** 
-  42:Core/Src/main.c **** /* USER CODE END PM */
-  43:Core/Src/main.c **** 
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 3
+  51 001a 0000     		.align	2
+  52              	.LC1:
+  53 001c 44696769 		.ascii	"Digitou G ne safada\015\012\000"
+  53      746F7520 
+  53      47206E65 
+  53      20736166 
+  53      6164610D 
+  54              		.section	.text.main,"ax",%progbits
+  55              		.align	1
+  56              		.global	main
+  57              		.syntax unified
+  58              		.thumb
+  59              		.thumb_func
+  61              	main:
+  62              	.LFB220:
+  63              		.file 1 "Core/Src/main.c"
+   1:Core/Src/main.c **** #include "main.h"
+   2:Core/Src/main.c **** #include "usb_device.h"
+   3:Core/Src/main.c **** uint8_t buffer[255];
+   4:Core/Src/main.c **** uint8_t gUSB[255];
+   5:Core/Src/main.c **** ADC_HandleTypeDef hadc1;
+   6:Core/Src/main.c **** TIM_HandleTypeDef htim2;
+   7:Core/Src/main.c **** 
+   8:Core/Src/main.c **** void SystemClock_Config(void);
+   9:Core/Src/main.c **** static void MX_GPIO_Init(void);
+  10:Core/Src/main.c **** static void MX_TIM2_Init(void);
+  11:Core/Src/main.c **** static void MX_ADC1_Init(void);
+  12:Core/Src/main.c **** 
+  13:Core/Src/main.c **** int main(void)
+  14:Core/Src/main.c **** {
+  64              		.loc 1 14 1
+  65              		.cfi_startproc
+  66              		@ args = 0, pretend = 0, frame = 8
+  67              		@ frame_needed = 1, uses_anonymous_args = 0
+  68 0000 80B5     		push	{r7, lr}
+  69              	.LCFI0:
+  70              		.cfi_def_cfa_offset 8
+  71              		.cfi_offset 7, -8
+  72              		.cfi_offset 14, -4
+  73 0002 82B0     		sub	sp, sp, #8
+  74              	.LCFI1:
+  75              		.cfi_def_cfa_offset 16
+  76 0004 00AF     		add	r7, sp, #0
+  77              	.LCFI2:
+  78              		.cfi_def_cfa_register 7
+  15:Core/Src/main.c ****   int read;
+  16:Core/Src/main.c ****   int32_t count = 0;
+  79              		.loc 1 16 11
+  80 0006 0023     		movs	r3, #0
+  81 0008 7B60     		str	r3, [r7, #4]
+  17:Core/Src/main.c ****  
+  18:Core/Src/main.c ****   HAL_Init();
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 3
 
 
-  44:Core/Src/main.c **** /* Private variables ---------------------------------------------------------*/
-  45:Core/Src/main.c **** ADC_HandleTypeDef hadc1;
-  46:Core/Src/main.c **** 
-  47:Core/Src/main.c **** TIM_HandleTypeDef htim2;
-  48:Core/Src/main.c **** 
-  49:Core/Src/main.c **** /* USER CODE BEGIN PV */
-  50:Core/Src/main.c **** 
-  51:Core/Src/main.c **** /* USER CODE END PV */
-  52:Core/Src/main.c **** 
-  53:Core/Src/main.c **** /* Private function prototypes -----------------------------------------------*/
-  54:Core/Src/main.c **** void SystemClock_Config(void);
-  55:Core/Src/main.c **** static void MX_GPIO_Init(void);
-  56:Core/Src/main.c **** static void MX_TIM2_Init(void);
-  57:Core/Src/main.c **** static void MX_ADC1_Init(void);
-  58:Core/Src/main.c **** /* USER CODE BEGIN PFP */
-  59:Core/Src/main.c **** 
-  60:Core/Src/main.c **** /* USER CODE END PFP */
-  61:Core/Src/main.c **** 
-  62:Core/Src/main.c **** /* Private user code ---------------------------------------------------------*/
-  63:Core/Src/main.c **** /* USER CODE BEGIN 0 */
-  64:Core/Src/main.c **** 
-  65:Core/Src/main.c **** /* USER CODE END 0 */
-  66:Core/Src/main.c **** 
-  67:Core/Src/main.c **** /**
-  68:Core/Src/main.c ****   * @brief  The application entry point.
-  69:Core/Src/main.c ****   * @retval int
-  70:Core/Src/main.c ****   */
-  71:Core/Src/main.c **** int main(void)
-  72:Core/Src/main.c **** {
-  61              		.loc 1 72 1
-  62              		.cfi_startproc
-  63              		@ args = 0, pretend = 0, frame = 8
-  64              		@ frame_needed = 1, uses_anonymous_args = 0
-  65 0000 80B5     		push	{r7, lr}
-  66              	.LCFI0:
-  67              		.cfi_def_cfa_offset 8
-  68              		.cfi_offset 7, -8
-  69              		.cfi_offset 14, -4
-  70 0002 82B0     		sub	sp, sp, #8
-  71              	.LCFI1:
-  72              		.cfi_def_cfa_offset 16
-  73 0004 00AF     		add	r7, sp, #0
-  74              	.LCFI2:
-  75              		.cfi_def_cfa_register 7
-  73:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
-  74:Core/Src/main.c ****   int read;
-  75:Core/Src/main.c ****   int32_t count = 0;
-  76              		.loc 1 75 11
-  77 0006 0023     		movs	r3, #0
-  78 0008 7B60     		str	r3, [r7, #4]
-  76:Core/Src/main.c ****   /* USER CODE END 1 */
-  77:Core/Src/main.c **** 
-  78:Core/Src/main.c ****   /* MCU Configuration--------------------------------------------------------*/
-  79:Core/Src/main.c **** 
-  80:Core/Src/main.c ****   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  81:Core/Src/main.c ****   HAL_Init();
-  79              		.loc 1 81 3
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 4
+  82              		.loc 1 18 3
+  83 000a FFF7FEFF 		bl	HAL_Init
+  19:Core/Src/main.c ****   SystemClock_Config();
+  84              		.loc 1 19 3
+  85 000e FFF7FEFF 		bl	SystemClock_Config
+  20:Core/Src/main.c ****   MX_GPIO_Init();
+  86              		.loc 1 20 3
+  87 0012 FFF7FEFF 		bl	MX_GPIO_Init
+  21:Core/Src/main.c ****   MX_TIM2_Init();
+  88              		.loc 1 21 3
+  89 0016 FFF7FEFF 		bl	MX_TIM2_Init
+  22:Core/Src/main.c ****   MX_ADC1_Init();
+  90              		.loc 1 22 3
+  91 001a FFF7FEFF 		bl	MX_ADC1_Init
+  23:Core/Src/main.c ****   MX_USB_DEVICE_Init();
+  92              		.loc 1 23 3
+  93 001e FFF7FEFF 		bl	MX_USB_DEVICE_Init
+  94              	.L6:
+  24:Core/Src/main.c ****   
+  25:Core/Src/main.c ****   while (1)
+  26:Core/Src/main.c ****   {
+  27:Core/Src/main.c ****       HAL_ADC_Start(&hadc1);
+  95              		.loc 1 27 7
+  96 0022 2648     		ldr	r0, .L8
+  97 0024 FFF7FEFF 		bl	HAL_ADC_Start
+  28:Core/Src/main.c ****     HAL_ADC_PollForConversion(&hadc1,100);
+  98              		.loc 1 28 5
+  99 0028 6421     		movs	r1, #100
+ 100 002a 2448     		ldr	r0, .L8
+ 101 002c FFF7FEFF 		bl	HAL_ADC_PollForConversion
+  29:Core/Src/main.c ****     read = HAL_ADC_GetValue(&hadc1);
+ 102              		.loc 1 29 12
+ 103 0030 2248     		ldr	r0, .L8
+ 104 0032 FFF7FEFF 		bl	HAL_ADC_GetValue
+ 105 0036 0346     		mov	r3, r0
+ 106              		.loc 1 29 10
+ 107 0038 3B60     		str	r3, [r7]
+  30:Core/Src/main.c ****     if (count >= 50)
+ 108              		.loc 1 30 8
+ 109 003a 7B68     		ldr	r3, [r7, #4]
+ 110 003c 312B     		cmp	r3, #49
+ 111 003e 1ADD     		ble	.L2
+ 112              	.LBB4:
+  31:Core/Src/main.c ****     {
+  32:Core/Src/main.c ****       sprintf(buffer, "Tesao no pino adc %d mV\r\n", (read*3300/4095));
+ 113              		.loc 1 32 59
+ 114 0040 3B68     		ldr	r3, [r7]
+ 115 0042 40F6E442 		movw	r2, #3300
+ 116 0046 02FB03F3 		mul	r3, r2, r3
+ 117              		.loc 1 32 7
+ 118 004a 1D4A     		ldr	r2, .L8+4
+ 119 004c 82FB0312 		smull	r1, r2, r2, r3
+ 120 0050 1A44     		add	r2, r2, r3
+ 121 0052 D212     		asrs	r2, r2, #11
+ 122 0054 DB17     		asrs	r3, r3, #31
+ 123 0056 D31A     		subs	r3, r2, r3
+ 124 0058 1A46     		mov	r2, r3
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 4
 
 
-  80 000a FFF7FEFF 		bl	HAL_Init
-  82:Core/Src/main.c **** 
-  83:Core/Src/main.c ****   /* USER CODE BEGIN Init */
-  84:Core/Src/main.c **** 
-  85:Core/Src/main.c ****   /* USER CODE END Init */
+ 125 005a 1A49     		ldr	r1, .L8+8
+ 126 005c 1A48     		ldr	r0, .L8+12
+ 127 005e FFF7FEFF 		bl	sprintf
+  33:Core/Src/main.c ****       CDC_Transmit_FS(buffer,strlen(buffer));
+ 128              		.loc 1 33 7
+ 129 0062 1948     		ldr	r0, .L8+12
+ 130 0064 FFF7FEFF 		bl	strlen
+ 131 0068 0346     		mov	r3, r0
+ 132 006a 1946     		mov	r1, r3
+ 133 006c 1648     		ldr	r0, .L8+12
+ 134 006e FFF7FEFF 		bl	CDC_Transmit_FS
+  34:Core/Src/main.c ****       count = 0;
+ 135              		.loc 1 34 13
+ 136 0072 0023     		movs	r3, #0
+ 137 0074 7B60     		str	r3, [r7, #4]
+ 138              	.L2:
+ 139              	.LBE4:
+  35:Core/Src/main.c ****     }
+  36:Core/Src/main.c ****     count++;
+ 140              		.loc 1 36 10
+ 141 0076 7B68     		ldr	r3, [r7, #4]
+ 142 0078 0133     		adds	r3, r3, #1
+ 143 007a 7B60     		str	r3, [r7, #4]
+  37:Core/Src/main.c **** 
+  38:Core/Src/main.c ****     HAL_Delay(10);
+ 144              		.loc 1 38 5
+ 145 007c 0A20     		movs	r0, #10
+ 146 007e FFF7FEFF 		bl	HAL_Delay
+  39:Core/Src/main.c ****     if (gUSB[0]!=0)
+ 147              		.loc 1 39 13
+ 148 0082 124B     		ldr	r3, .L8+16
+ 149 0084 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 150              		.loc 1 39 8
+ 151 0086 002B     		cmp	r3, #0
+ 152 0088 CBD0     		beq	.L6
+  40:Core/Src/main.c ****     {
+  41:Core/Src/main.c ****       switch(gUSB[0])
+ 153              		.loc 1 41 18
+ 154 008a 104B     		ldr	r3, .L8+16
+ 155 008c 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 156              		.loc 1 41 7
+ 157 008e 672B     		cmp	r3, #103
+ 158 0090 0CD1     		bne	.L7
+ 159              	.LBB5:
+  42:Core/Src/main.c ****       {
+  43:Core/Src/main.c ****         case 103:
+  44:Core/Src/main.c ****         {
+  45:Core/Src/main.c ****           sprintf(buffer, "Digitou G ne safada\r\n");
+ 160              		.loc 1 45 11
+ 161 0092 0F49     		ldr	r1, .L8+20
+ 162 0094 0C48     		ldr	r0, .L8+12
+ 163 0096 FFF7FEFF 		bl	sprintf
+  46:Core/Src/main.c ****           CDC_Transmit_FS(buffer,strlen(buffer));
+ 164              		.loc 1 46 11
+ 165 009a 0B48     		ldr	r0, .L8+12
+ 166 009c FFF7FEFF 		bl	strlen
+ 167 00a0 0346     		mov	r3, r0
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 5
+
+
+ 168 00a2 1946     		mov	r1, r3
+ 169 00a4 0848     		ldr	r0, .L8+12
+ 170 00a6 FFF7FEFF 		bl	CDC_Transmit_FS
+  47:Core/Src/main.c ****           break;
+ 171              		.loc 1 47 11
+ 172 00aa 00E0     		b	.L5
+ 173              	.L7:
+ 174              	.LBE5:
+  48:Core/Src/main.c ****         }
+  49:Core/Src/main.c ****         default:
+  50:Core/Src/main.c ****         {
+  51:Core/Src/main.c ****           break;
+ 175              		.loc 1 51 11
+ 176 00ac 00BF     		nop
+ 177              	.L5:
+  52:Core/Src/main.c ****         }
+  53:Core/Src/main.c ****       }
+  54:Core/Src/main.c ****       memset(gUSB,0,255);
+ 178              		.loc 1 54 7
+ 179 00ae FF22     		movs	r2, #255
+ 180 00b0 0021     		movs	r1, #0
+ 181 00b2 0648     		ldr	r0, .L8+16
+ 182 00b4 FFF7FEFF 		bl	memset
+  27:Core/Src/main.c ****     HAL_ADC_PollForConversion(&hadc1,100);
+ 183              		.loc 1 27 7
+ 184 00b8 B3E7     		b	.L6
+ 185              	.L9:
+ 186 00ba 00BF     		.align	2
+ 187              	.L8:
+ 188 00bc 00000000 		.word	hadc1
+ 189 00c0 81000880 		.word	-2146959231
+ 190 00c4 00000000 		.word	.LC0
+ 191 00c8 00000000 		.word	buffer
+ 192 00cc 00000000 		.word	gUSB
+ 193 00d0 1C000000 		.word	.LC1
+ 194              		.cfi_endproc
+ 195              	.LFE220:
+ 197              		.section	.text.SystemClock_Config,"ax",%progbits
+ 198              		.align	1
+ 199              		.global	SystemClock_Config
+ 200              		.syntax unified
+ 201              		.thumb
+ 202              		.thumb_func
+ 204              	SystemClock_Config:
+ 205              	.LFB221:
+  55:Core/Src/main.c ****     }
+  56:Core/Src/main.c ****   }
+  57:Core/Src/main.c **** }
+  58:Core/Src/main.c **** 
+  59:Core/Src/main.c **** void SystemClock_Config(void)
+  60:Core/Src/main.c **** {
+ 206              		.loc 1 60 1
+ 207              		.cfi_startproc
+ 208              		@ args = 0, pretend = 0, frame = 80
+ 209              		@ frame_needed = 1, uses_anonymous_args = 0
+ 210 0000 80B5     		push	{r7, lr}
+ 211              	.LCFI3:
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 6
+
+
+ 212              		.cfi_def_cfa_offset 8
+ 213              		.cfi_offset 7, -8
+ 214              		.cfi_offset 14, -4
+ 215 0002 94B0     		sub	sp, sp, #80
+ 216              	.LCFI4:
+ 217              		.cfi_def_cfa_offset 88
+ 218 0004 00AF     		add	r7, sp, #0
+ 219              	.LCFI5:
+ 220              		.cfi_def_cfa_register 7
+  61:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 221              		.loc 1 61 22
+ 222 0006 07F12003 		add	r3, r7, #32
+ 223 000a 3022     		movs	r2, #48
+ 224 000c 0021     		movs	r1, #0
+ 225 000e 1846     		mov	r0, r3
+ 226 0010 FFF7FEFF 		bl	memset
+  62:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 227              		.loc 1 62 22
+ 228 0014 07F10C03 		add	r3, r7, #12
+ 229 0018 0022     		movs	r2, #0
+ 230 001a 1A60     		str	r2, [r3]
+ 231 001c 5A60     		str	r2, [r3, #4]
+ 232 001e 9A60     		str	r2, [r3, #8]
+ 233 0020 DA60     		str	r2, [r3, #12]
+ 234 0022 1A61     		str	r2, [r3, #16]
+ 235              	.LBB6:
+  63:Core/Src/main.c **** 
+  64:Core/Src/main.c ****   /** Configure the main internal regulator output voltage
+  65:Core/Src/main.c ****   */
+  66:Core/Src/main.c ****   __HAL_RCC_PWR_CLK_ENABLE();
+ 236              		.loc 1 66 3
+ 237 0024 0023     		movs	r3, #0
+ 238 0026 BB60     		str	r3, [r7, #8]
+ 239 0028 294B     		ldr	r3, .L14
+ 240 002a 1B6C     		ldr	r3, [r3, #64]
+ 241 002c 284A     		ldr	r2, .L14
+ 242 002e 43F08053 		orr	r3, r3, #268435456
+ 243 0032 1364     		str	r3, [r2, #64]
+ 244 0034 264B     		ldr	r3, .L14
+ 245 0036 1B6C     		ldr	r3, [r3, #64]
+ 246 0038 03F08053 		and	r3, r3, #268435456
+ 247 003c BB60     		str	r3, [r7, #8]
+ 248 003e BB68     		ldr	r3, [r7, #8]
+ 249              	.LBE6:
+ 250              	.LBB7:
+  67:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+ 251              		.loc 1 67 3
+ 252 0040 0023     		movs	r3, #0
+ 253 0042 7B60     		str	r3, [r7, #4]
+ 254 0044 234B     		ldr	r3, .L14+4
+ 255 0046 1B68     		ldr	r3, [r3]
+ 256 0048 224A     		ldr	r2, .L14+4
+ 257 004a 43F44043 		orr	r3, r3, #49152
+ 258 004e 1360     		str	r3, [r2]
+ 259 0050 204B     		ldr	r3, .L14+4
+ 260 0052 1B68     		ldr	r3, [r3]
+ 261 0054 03F44043 		and	r3, r3, #49152
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 7
+
+
+ 262 0058 7B60     		str	r3, [r7, #4]
+ 263 005a 7B68     		ldr	r3, [r7, #4]
+ 264              	.LBE7:
+  68:Core/Src/main.c **** 
+  69:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+  70:Core/Src/main.c ****   * in the RCC_OscInitTypeDef structure.
+  71:Core/Src/main.c ****   */
+  72:Core/Src/main.c ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
+ 265              		.loc 1 72 36
+ 266 005c 0323     		movs	r3, #3
+ 267 005e 3B62     		str	r3, [r7, #32]
+  73:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+ 268              		.loc 1 73 30
+ 269 0060 4FF48033 		mov	r3, #65536
+ 270 0064 7B62     		str	r3, [r7, #36]
+  74:Core/Src/main.c ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+ 271              		.loc 1 74 30
+ 272 0066 0123     		movs	r3, #1
+ 273 0068 FB62     		str	r3, [r7, #44]
+  75:Core/Src/main.c ****   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+ 274              		.loc 1 75 41
+ 275 006a 1023     		movs	r3, #16
+ 276 006c 3B63     		str	r3, [r7, #48]
+  76:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 277              		.loc 1 76 34
+ 278 006e 0223     		movs	r3, #2
+ 279 0070 BB63     		str	r3, [r7, #56]
+  77:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+ 280              		.loc 1 77 35
+ 281 0072 4FF48003 		mov	r3, #4194304
+ 282 0076 FB63     		str	r3, [r7, #60]
+  78:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 15;
+ 283              		.loc 1 78 30
+ 284 0078 0F23     		movs	r3, #15
+ 285 007a 3B64     		str	r3, [r7, #64]
+  79:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 144;
+ 286              		.loc 1 79 30
+ 287 007c 9023     		movs	r3, #144
+ 288 007e 7B64     		str	r3, [r7, #68]
+  80:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+ 289              		.loc 1 80 30
+ 290 0080 0223     		movs	r3, #2
+ 291 0082 BB64     		str	r3, [r7, #72]
+  81:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 5;
+ 292              		.loc 1 81 30
+ 293 0084 0523     		movs	r3, #5
+ 294 0086 FB64     		str	r3, [r7, #76]
+  82:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 295              		.loc 1 82 7
+ 296 0088 07F12003 		add	r3, r7, #32
+ 297 008c 1846     		mov	r0, r3
+ 298 008e FFF7FEFF 		bl	HAL_RCC_OscConfig
+ 299 0092 0346     		mov	r3, r0
+ 300              		.loc 1 82 6
+ 301 0094 002B     		cmp	r3, #0
+ 302 0096 01D0     		beq	.L11
+  83:Core/Src/main.c ****   {
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 8
+
+
+  84:Core/Src/main.c ****     Error_Handler();
+ 303              		.loc 1 84 5
+ 304 0098 FFF7FEFF 		bl	Error_Handler
+ 305              	.L11:
+  85:Core/Src/main.c ****   }
   86:Core/Src/main.c **** 
-  87:Core/Src/main.c ****   /* Configure the system clock */
-  88:Core/Src/main.c ****   SystemClock_Config();
-  81              		.loc 1 88 3
-  82 000e FFF7FEFF 		bl	SystemClock_Config
-  89:Core/Src/main.c **** 
-  90:Core/Src/main.c ****   /* USER CODE BEGIN SysInit */
-  91:Core/Src/main.c **** 
-  92:Core/Src/main.c ****   /* USER CODE END SysInit */
-  93:Core/Src/main.c **** 
-  94:Core/Src/main.c ****   /* Initialize all configured peripherals */
-  95:Core/Src/main.c ****   MX_GPIO_Init();
-  83              		.loc 1 95 3
-  84 0012 FFF7FEFF 		bl	MX_GPIO_Init
-  96:Core/Src/main.c ****   MX_TIM2_Init();
-  85              		.loc 1 96 3
-  86 0016 FFF7FEFF 		bl	MX_TIM2_Init
-  97:Core/Src/main.c ****   MX_ADC1_Init();
-  87              		.loc 1 97 3
-  88 001a FFF7FEFF 		bl	MX_ADC1_Init
-  98:Core/Src/main.c ****   MX_USB_DEVICE_Init();
-  89              		.loc 1 98 3
-  90 001e FFF7FEFF 		bl	MX_USB_DEVICE_Init
-  91              	.L3:
-  99:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
- 100:Core/Src/main.c **** 
- 101:Core/Src/main.c ****   /* USER CODE END 2 */
- 102:Core/Src/main.c **** 
- 103:Core/Src/main.c ****   /* Infinite loop */
- 104:Core/Src/main.c ****   /* USER CODE BEGIN WHILE */
- 105:Core/Src/main.c ****   while (1)
- 106:Core/Src/main.c ****   {
- 107:Core/Src/main.c ****       HAL_ADC_Start(&hadc1);
-  92              		.loc 1 107 7
-  93 0022 1848     		ldr	r0, .L4
-  94 0024 FFF7FEFF 		bl	HAL_ADC_Start
- 108:Core/Src/main.c ****     HAL_ADC_PollForConversion(&hadc1,100);
-  95              		.loc 1 108 5
-  96 0028 6421     		movs	r1, #100
-  97 002a 1648     		ldr	r0, .L4
-  98 002c FFF7FEFF 		bl	HAL_ADC_PollForConversion
- 109:Core/Src/main.c ****     read = HAL_ADC_GetValue(&hadc1);
-  99              		.loc 1 109 12
- 100 0030 1448     		ldr	r0, .L4
- 101 0032 FFF7FEFF 		bl	HAL_ADC_GetValue
- 102 0036 0346     		mov	r3, r0
- 103              		.loc 1 109 10
- 104 0038 3B60     		str	r3, [r7]
- 110:Core/Src/main.c ****     if (count >= 50)
- 105              		.loc 1 110 8
- 106 003a 7B68     		ldr	r3, [r7, #4]
- 107 003c 312B     		cmp	r3, #49
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 5
+  87:Core/Src/main.c ****   /** Initializes the CPU, AHB and APB buses clocks
+  88:Core/Src/main.c ****   */
+  89:Core/Src/main.c ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+ 306              		.loc 1 89 31
+ 307 009c 0F23     		movs	r3, #15
+ 308 009e FB60     		str	r3, [r7, #12]
+  90:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  91:Core/Src/main.c ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+ 309              		.loc 1 91 34
+ 310 00a0 0023     		movs	r3, #0
+ 311 00a2 3B61     		str	r3, [r7, #16]
+  92:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 312              		.loc 1 92 35
+ 313 00a4 0023     		movs	r3, #0
+ 314 00a6 7B61     		str	r3, [r7, #20]
+  93:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+ 315              		.loc 1 93 36
+ 316 00a8 0023     		movs	r3, #0
+ 317 00aa BB61     		str	r3, [r7, #24]
+  94:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 318              		.loc 1 94 36
+ 319 00ac 0023     		movs	r3, #0
+ 320 00ae FB61     		str	r3, [r7, #28]
+  95:Core/Src/main.c **** 
+  96:Core/Src/main.c ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+ 321              		.loc 1 96 7
+ 322 00b0 07F10C03 		add	r3, r7, #12
+ 323 00b4 0021     		movs	r1, #0
+ 324 00b6 1846     		mov	r0, r3
+ 325 00b8 FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 326 00bc 0346     		mov	r3, r0
+ 327              		.loc 1 96 6
+ 328 00be 002B     		cmp	r3, #0
+ 329 00c0 01D0     		beq	.L13
+  97:Core/Src/main.c ****   {
+  98:Core/Src/main.c ****     Error_Handler();
+ 330              		.loc 1 98 5
+ 331 00c2 FFF7FEFF 		bl	Error_Handler
+ 332              	.L13:
+  99:Core/Src/main.c ****   }
+ 100:Core/Src/main.c **** }
+ 333              		.loc 1 100 1
+ 334 00c6 00BF     		nop
+ 335 00c8 5037     		adds	r7, r7, #80
+ 336              	.LCFI6:
+ 337              		.cfi_def_cfa_offset 8
+ 338 00ca BD46     		mov	sp, r7
+ 339              	.LCFI7:
+ 340              		.cfi_def_cfa_register 13
+ 341              		@ sp needed
+ 342 00cc 80BD     		pop	{r7, pc}
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 9
 
 
- 108 003e 1ADD     		ble	.L2
- 109              	.LBB4:
- 111:Core/Src/main.c ****     {
- 112:Core/Src/main.c ****       sprintf(buffer, "Tesao no pino adc %d mV\r\n", (read*3300/4095));
- 110              		.loc 1 112 59
- 111 0040 3B68     		ldr	r3, [r7]
- 112 0042 40F6E442 		movw	r2, #3300
- 113 0046 02FB03F3 		mul	r3, r2, r3
- 114              		.loc 1 112 7
- 115 004a 0F4A     		ldr	r2, .L4+4
- 116 004c 82FB0312 		smull	r1, r2, r2, r3
- 117 0050 1A44     		add	r2, r2, r3
- 118 0052 D212     		asrs	r2, r2, #11
- 119 0054 DB17     		asrs	r3, r3, #31
- 120 0056 D31A     		subs	r3, r2, r3
- 121 0058 1A46     		mov	r2, r3
- 122 005a 0C49     		ldr	r1, .L4+8
- 123 005c 0C48     		ldr	r0, .L4+12
- 124 005e FFF7FEFF 		bl	sprintf
- 113:Core/Src/main.c ****       CDC_Transmit_FS(buffer,strlen(buffer));
- 125              		.loc 1 113 7
- 126 0062 0B48     		ldr	r0, .L4+12
- 127 0064 FFF7FEFF 		bl	strlen
- 128 0068 0346     		mov	r3, r0
- 129 006a 1946     		mov	r1, r3
- 130 006c 0848     		ldr	r0, .L4+12
- 131 006e FFF7FEFF 		bl	CDC_Transmit_FS
- 114:Core/Src/main.c ****       count = 0;
- 132              		.loc 1 114 13
- 133 0072 0023     		movs	r3, #0
- 134 0074 7B60     		str	r3, [r7, #4]
- 135              	.L2:
- 136              	.LBE4:
- 115:Core/Src/main.c ****     }
- 116:Core/Src/main.c ****     count++;
- 137              		.loc 1 116 10
- 138 0076 7B68     		ldr	r3, [r7, #4]
- 139 0078 0133     		adds	r3, r3, #1
- 140 007a 7B60     		str	r3, [r7, #4]
+ 343              	.L15:
+ 344 00ce 00BF     		.align	2
+ 345              	.L14:
+ 346 00d0 00380240 		.word	1073887232
+ 347 00d4 00700040 		.word	1073770496
+ 348              		.cfi_endproc
+ 349              	.LFE221:
+ 351              		.section	.text.MX_ADC1_Init,"ax",%progbits
+ 352              		.align	1
+ 353              		.syntax unified
+ 354              		.thumb
+ 355              		.thumb_func
+ 357              	MX_ADC1_Init:
+ 358              	.LFB222:
+ 101:Core/Src/main.c **** 
+ 102:Core/Src/main.c **** /**
+ 103:Core/Src/main.c ****   * @brief ADC1 Initialization Function
+ 104:Core/Src/main.c ****   * @param None
+ 105:Core/Src/main.c ****   * @retval None
+ 106:Core/Src/main.c ****   */
+ 107:Core/Src/main.c **** static void MX_ADC1_Init(void)
+ 108:Core/Src/main.c **** {
+ 359              		.loc 1 108 1
+ 360              		.cfi_startproc
+ 361              		@ args = 0, pretend = 0, frame = 16
+ 362              		@ frame_needed = 1, uses_anonymous_args = 0
+ 363 0000 80B5     		push	{r7, lr}
+ 364              	.LCFI8:
+ 365              		.cfi_def_cfa_offset 8
+ 366              		.cfi_offset 7, -8
+ 367              		.cfi_offset 14, -4
+ 368 0002 84B0     		sub	sp, sp, #16
+ 369              	.LCFI9:
+ 370              		.cfi_def_cfa_offset 24
+ 371 0004 00AF     		add	r7, sp, #0
+ 372              	.LCFI10:
+ 373              		.cfi_def_cfa_register 7
+ 109:Core/Src/main.c **** 
+ 110:Core/Src/main.c ****   /* USER CODE BEGIN ADC1_Init 0 */
+ 111:Core/Src/main.c **** 
+ 112:Core/Src/main.c ****   /* USER CODE END ADC1_Init 0 */
+ 113:Core/Src/main.c **** 
+ 114:Core/Src/main.c ****   ADC_ChannelConfTypeDef sConfig = {0};
+ 374              		.loc 1 114 26
+ 375 0006 3B46     		mov	r3, r7
+ 376 0008 0022     		movs	r2, #0
+ 377 000a 1A60     		str	r2, [r3]
+ 378 000c 5A60     		str	r2, [r3, #4]
+ 379 000e 9A60     		str	r2, [r3, #8]
+ 380 0010 DA60     		str	r2, [r3, #12]
+ 115:Core/Src/main.c **** 
+ 116:Core/Src/main.c ****   /* USER CODE BEGIN ADC1_Init 1 */
  117:Core/Src/main.c **** 
- 118:Core/Src/main.c ****     HAL_Delay(10);
- 141              		.loc 1 118 5
- 142 007c 0A20     		movs	r0, #10
- 143 007e FFF7FEFF 		bl	HAL_Delay
- 107:Core/Src/main.c ****     HAL_ADC_PollForConversion(&hadc1,100);
- 144              		.loc 1 107 7
- 145 0082 CEE7     		b	.L3
- 146              	.L5:
- 147              		.align	2
- 148              	.L4:
- 149 0084 00000000 		.word	hadc1
- 150 0088 81000880 		.word	-2146959231
- 151 008c 00000000 		.word	.LC0
- 152 0090 00000000 		.word	buffer
- 153              		.cfi_endproc
- 154              	.LFE220:
- 156              		.section	.text.SystemClock_Config,"ax",%progbits
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 6
+ 118:Core/Src/main.c ****   /* USER CODE END ADC1_Init 1 */
+ 119:Core/Src/main.c **** 
+ 120:Core/Src/main.c ****   /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of con
+ 121:Core/Src/main.c ****   */
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 10
 
 
- 157              		.align	1
- 158              		.global	SystemClock_Config
- 159              		.syntax unified
- 160              		.thumb
- 161              		.thumb_func
- 163              	SystemClock_Config:
- 164              	.LFB221:
- 119:Core/Src/main.c ****     
- 120:Core/Src/main.c ****     /* USER CODE BEGIN 3 */
- 121:Core/Src/main.c ****   }
- 122:Core/Src/main.c ****   /* USER CODE END 3 */
- 123:Core/Src/main.c **** }
- 124:Core/Src/main.c **** 
- 125:Core/Src/main.c **** /**
- 126:Core/Src/main.c ****   * @brief System Clock Configuration
- 127:Core/Src/main.c ****   * @retval None
- 128:Core/Src/main.c ****   */
- 129:Core/Src/main.c **** void SystemClock_Config(void)
- 130:Core/Src/main.c **** {
- 165              		.loc 1 130 1
- 166              		.cfi_startproc
- 167              		@ args = 0, pretend = 0, frame = 80
- 168              		@ frame_needed = 1, uses_anonymous_args = 0
- 169 0000 80B5     		push	{r7, lr}
- 170              	.LCFI3:
- 171              		.cfi_def_cfa_offset 8
- 172              		.cfi_offset 7, -8
- 173              		.cfi_offset 14, -4
- 174 0002 94B0     		sub	sp, sp, #80
- 175              	.LCFI4:
- 176              		.cfi_def_cfa_offset 88
- 177 0004 00AF     		add	r7, sp, #0
- 178              	.LCFI5:
- 179              		.cfi_def_cfa_register 7
- 131:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
- 180              		.loc 1 131 22
- 181 0006 07F12003 		add	r3, r7, #32
- 182 000a 3022     		movs	r2, #48
- 183 000c 0021     		movs	r1, #0
- 184 000e 1846     		mov	r0, r3
- 185 0010 FFF7FEFF 		bl	memset
- 132:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
- 186              		.loc 1 132 22
- 187 0014 07F10C03 		add	r3, r7, #12
- 188 0018 0022     		movs	r2, #0
- 189 001a 1A60     		str	r2, [r3]
- 190 001c 5A60     		str	r2, [r3, #4]
- 191 001e 9A60     		str	r2, [r3, #8]
- 192 0020 DA60     		str	r2, [r3, #12]
- 193 0022 1A61     		str	r2, [r3, #16]
- 194              	.LBB5:
- 133:Core/Src/main.c **** 
- 134:Core/Src/main.c ****   /** Configure the main internal regulator output voltage
- 135:Core/Src/main.c ****   */
- 136:Core/Src/main.c ****   __HAL_RCC_PWR_CLK_ENABLE();
- 195              		.loc 1 136 3
- 196 0024 0023     		movs	r3, #0
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 7
+ 122:Core/Src/main.c ****   hadc1.Instance = ADC1;
+ 381              		.loc 1 122 18
+ 382 0012 214B     		ldr	r3, .L20
+ 383 0014 214A     		ldr	r2, .L20+4
+ 384 0016 1A60     		str	r2, [r3]
+ 123:Core/Src/main.c ****   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+ 385              		.loc 1 123 29
+ 386 0018 1F4B     		ldr	r3, .L20
+ 387 001a 0022     		movs	r2, #0
+ 388 001c 5A60     		str	r2, [r3, #4]
+ 124:Core/Src/main.c ****   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+ 389              		.loc 1 124 25
+ 390 001e 1E4B     		ldr	r3, .L20
+ 391 0020 0022     		movs	r2, #0
+ 392 0022 9A60     		str	r2, [r3, #8]
+ 125:Core/Src/main.c ****   hadc1.Init.ScanConvMode = DISABLE;
+ 393              		.loc 1 125 27
+ 394 0024 1C4B     		ldr	r3, .L20
+ 395 0026 0022     		movs	r2, #0
+ 396 0028 1A61     		str	r2, [r3, #16]
+ 126:Core/Src/main.c ****   hadc1.Init.ContinuousConvMode = DISABLE;
+ 397              		.loc 1 126 33
+ 398 002a 1B4B     		ldr	r3, .L20
+ 399 002c 0022     		movs	r2, #0
+ 400 002e 1A76     		strb	r2, [r3, #24]
+ 127:Core/Src/main.c ****   hadc1.Init.DiscontinuousConvMode = DISABLE;
+ 401              		.loc 1 127 36
+ 402 0030 194B     		ldr	r3, .L20
+ 403 0032 0022     		movs	r2, #0
+ 404 0034 83F82020 		strb	r2, [r3, #32]
+ 128:Core/Src/main.c ****   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+ 405              		.loc 1 128 35
+ 406 0038 174B     		ldr	r3, .L20
+ 407 003a 0022     		movs	r2, #0
+ 408 003c DA62     		str	r2, [r3, #44]
+ 129:Core/Src/main.c ****   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+ 409              		.loc 1 129 31
+ 410 003e 164B     		ldr	r3, .L20
+ 411 0040 174A     		ldr	r2, .L20+8
+ 412 0042 9A62     		str	r2, [r3, #40]
+ 130:Core/Src/main.c ****   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+ 413              		.loc 1 130 24
+ 414 0044 144B     		ldr	r3, .L20
+ 415 0046 0022     		movs	r2, #0
+ 416 0048 DA60     		str	r2, [r3, #12]
+ 131:Core/Src/main.c ****   hadc1.Init.NbrOfConversion = 1;
+ 417              		.loc 1 131 30
+ 418 004a 134B     		ldr	r3, .L20
+ 419 004c 0122     		movs	r2, #1
+ 420 004e DA61     		str	r2, [r3, #28]
+ 132:Core/Src/main.c ****   hadc1.Init.DMAContinuousRequests = DISABLE;
+ 421              		.loc 1 132 36
+ 422 0050 114B     		ldr	r3, .L20
+ 423 0052 0022     		movs	r2, #0
+ 424 0054 83F83020 		strb	r2, [r3, #48]
+ 133:Core/Src/main.c ****   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+ 425              		.loc 1 133 27
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 11
 
 
- 197 0026 BB60     		str	r3, [r7, #8]
- 198 0028 294B     		ldr	r3, .L10
- 199 002a 1B6C     		ldr	r3, [r3, #64]
- 200 002c 284A     		ldr	r2, .L10
- 201 002e 43F08053 		orr	r3, r3, #268435456
- 202 0032 1364     		str	r3, [r2, #64]
- 203 0034 264B     		ldr	r3, .L10
- 204 0036 1B6C     		ldr	r3, [r3, #64]
- 205 0038 03F08053 		and	r3, r3, #268435456
- 206 003c BB60     		str	r3, [r7, #8]
- 207 003e BB68     		ldr	r3, [r7, #8]
- 208              	.LBE5:
- 209              	.LBB6:
- 137:Core/Src/main.c ****   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
- 210              		.loc 1 137 3
- 211 0040 0023     		movs	r3, #0
- 212 0042 7B60     		str	r3, [r7, #4]
- 213 0044 234B     		ldr	r3, .L10+4
- 214 0046 1B68     		ldr	r3, [r3]
- 215 0048 224A     		ldr	r2, .L10+4
- 216 004a 43F44043 		orr	r3, r3, #49152
- 217 004e 1360     		str	r3, [r2]
- 218 0050 204B     		ldr	r3, .L10+4
- 219 0052 1B68     		ldr	r3, [r3]
- 220 0054 03F44043 		and	r3, r3, #49152
- 221 0058 7B60     		str	r3, [r7, #4]
- 222 005a 7B68     		ldr	r3, [r7, #4]
- 223              	.LBE6:
+ 426 0058 0F4B     		ldr	r3, .L20
+ 427 005a 0122     		movs	r2, #1
+ 428 005c 5A61     		str	r2, [r3, #20]
+ 134:Core/Src/main.c ****   if (HAL_ADC_Init(&hadc1) != HAL_OK)
+ 429              		.loc 1 134 7
+ 430 005e 0E48     		ldr	r0, .L20
+ 431 0060 FFF7FEFF 		bl	HAL_ADC_Init
+ 432 0064 0346     		mov	r3, r0
+ 433              		.loc 1 134 6
+ 434 0066 002B     		cmp	r3, #0
+ 435 0068 01D0     		beq	.L17
+ 135:Core/Src/main.c ****   {
+ 136:Core/Src/main.c ****     Error_Handler();
+ 436              		.loc 1 136 5
+ 437 006a FFF7FEFF 		bl	Error_Handler
+ 438              	.L17:
+ 137:Core/Src/main.c ****   }
  138:Core/Src/main.c **** 
- 139:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
- 140:Core/Src/main.c ****   * in the RCC_OscInitTypeDef structure.
- 141:Core/Src/main.c ****   */
- 142:Core/Src/main.c ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
- 224              		.loc 1 142 36
- 225 005c 0323     		movs	r3, #3
- 226 005e 3B62     		str	r3, [r7, #32]
- 143:Core/Src/main.c ****   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
- 227              		.loc 1 143 30
- 228 0060 4FF48033 		mov	r3, #65536
- 229 0064 7B62     		str	r3, [r7, #36]
- 144:Core/Src/main.c ****   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
- 230              		.loc 1 144 30
- 231 0066 0123     		movs	r3, #1
- 232 0068 FB62     		str	r3, [r7, #44]
- 145:Core/Src/main.c ****   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
- 233              		.loc 1 145 41
- 234 006a 1023     		movs	r3, #16
- 235 006c 3B63     		str	r3, [r7, #48]
- 146:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
- 236              		.loc 1 146 34
- 237 006e 0223     		movs	r3, #2
- 238 0070 BB63     		str	r3, [r7, #56]
- 147:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
- 239              		.loc 1 147 35
- 240 0072 4FF48003 		mov	r3, #4194304
- 241 0076 FB63     		str	r3, [r7, #60]
- 148:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 15;
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 8
+ 139:Core/Src/main.c ****   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and it
+ 140:Core/Src/main.c ****   */
+ 141:Core/Src/main.c ****   sConfig.Channel = ADC_CHANNEL_2;
+ 439              		.loc 1 141 19
+ 440 006e 0223     		movs	r3, #2
+ 441 0070 3B60     		str	r3, [r7]
+ 142:Core/Src/main.c ****   sConfig.Rank = 1;
+ 442              		.loc 1 142 16
+ 443 0072 0123     		movs	r3, #1
+ 444 0074 7B60     		str	r3, [r7, #4]
+ 143:Core/Src/main.c ****   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+ 445              		.loc 1 143 24
+ 446 0076 0023     		movs	r3, #0
+ 447 0078 BB60     		str	r3, [r7, #8]
+ 144:Core/Src/main.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+ 448              		.loc 1 144 7
+ 449 007a 3B46     		mov	r3, r7
+ 450 007c 1946     		mov	r1, r3
+ 451 007e 0648     		ldr	r0, .L20
+ 452 0080 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
+ 453 0084 0346     		mov	r3, r0
+ 454              		.loc 1 144 6
+ 455 0086 002B     		cmp	r3, #0
+ 456 0088 01D0     		beq	.L19
+ 145:Core/Src/main.c ****   {
+ 146:Core/Src/main.c ****     Error_Handler();
+ 457              		.loc 1 146 5
+ 458 008a FFF7FEFF 		bl	Error_Handler
+ 459              	.L19:
+ 147:Core/Src/main.c ****   }
+ 148:Core/Src/main.c ****   /* USER CODE BEGIN ADC1_Init 2 */
+ 149:Core/Src/main.c **** 
+ 150:Core/Src/main.c ****   /* USER CODE END ADC1_Init 2 */
+ 151:Core/Src/main.c **** 
+ 152:Core/Src/main.c **** }
+ 460              		.loc 1 152 1
+ 461 008e 00BF     		nop
+ 462 0090 1037     		adds	r7, r7, #16
+ 463              	.LCFI11:
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 12
 
 
- 242              		.loc 1 148 30
- 243 0078 0F23     		movs	r3, #15
- 244 007a 3B64     		str	r3, [r7, #64]
- 149:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 144;
- 245              		.loc 1 149 30
- 246 007c 9023     		movs	r3, #144
- 247 007e 7B64     		str	r3, [r7, #68]
- 150:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
- 248              		.loc 1 150 30
- 249 0080 0223     		movs	r3, #2
- 250 0082 BB64     		str	r3, [r7, #72]
- 151:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = 5;
- 251              		.loc 1 151 30
- 252 0084 0523     		movs	r3, #5
- 253 0086 FB64     		str	r3, [r7, #76]
- 152:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
- 254              		.loc 1 152 7
- 255 0088 07F12003 		add	r3, r7, #32
- 256 008c 1846     		mov	r0, r3
- 257 008e FFF7FEFF 		bl	HAL_RCC_OscConfig
- 258 0092 0346     		mov	r3, r0
- 259              		.loc 1 152 6
- 260 0094 002B     		cmp	r3, #0
- 261 0096 01D0     		beq	.L7
- 153:Core/Src/main.c ****   {
- 154:Core/Src/main.c ****     Error_Handler();
- 262              		.loc 1 154 5
- 263 0098 FFF7FEFF 		bl	Error_Handler
- 264              	.L7:
- 155:Core/Src/main.c ****   }
- 156:Core/Src/main.c **** 
- 157:Core/Src/main.c ****   /** Initializes the CPU, AHB and APB buses clocks
+ 464              		.cfi_def_cfa_offset 8
+ 465 0092 BD46     		mov	sp, r7
+ 466              	.LCFI12:
+ 467              		.cfi_def_cfa_register 13
+ 468              		@ sp needed
+ 469 0094 80BD     		pop	{r7, pc}
+ 470              	.L21:
+ 471 0096 00BF     		.align	2
+ 472              	.L20:
+ 473 0098 00000000 		.word	hadc1
+ 474 009c 00200140 		.word	1073815552
+ 475 00a0 0100000F 		.word	251658241
+ 476              		.cfi_endproc
+ 477              	.LFE222:
+ 479              		.section	.text.MX_TIM2_Init,"ax",%progbits
+ 480              		.align	1
+ 481              		.syntax unified
+ 482              		.thumb
+ 483              		.thumb_func
+ 485              	MX_TIM2_Init:
+ 486              	.LFB223:
+ 153:Core/Src/main.c **** 
+ 154:Core/Src/main.c **** /**
+ 155:Core/Src/main.c ****   * @brief TIM2 Initialization Function
+ 156:Core/Src/main.c ****   * @param None
+ 157:Core/Src/main.c ****   * @retval None
  158:Core/Src/main.c ****   */
- 159:Core/Src/main.c ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
- 265              		.loc 1 159 31
- 266 009c 0F23     		movs	r3, #15
- 267 009e FB60     		str	r3, [r7, #12]
- 160:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
- 161:Core/Src/main.c ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
- 268              		.loc 1 161 34
- 269 00a0 0023     		movs	r3, #0
- 270 00a2 3B61     		str	r3, [r7, #16]
- 162:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
- 271              		.loc 1 162 35
- 272 00a4 0023     		movs	r3, #0
- 273 00a6 7B61     		str	r3, [r7, #20]
- 163:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
- 274              		.loc 1 163 36
- 275 00a8 0023     		movs	r3, #0
- 276 00aa BB61     		str	r3, [r7, #24]
- 164:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
- 277              		.loc 1 164 36
- 278 00ac 0023     		movs	r3, #0
- 279 00ae FB61     		str	r3, [r7, #28]
+ 159:Core/Src/main.c **** static void MX_TIM2_Init(void)
+ 160:Core/Src/main.c **** {
+ 487              		.loc 1 160 1
+ 488              		.cfi_startproc
+ 489              		@ args = 0, pretend = 0, frame = 40
+ 490              		@ frame_needed = 1, uses_anonymous_args = 0
+ 491 0000 80B5     		push	{r7, lr}
+ 492              	.LCFI13:
+ 493              		.cfi_def_cfa_offset 8
+ 494              		.cfi_offset 7, -8
+ 495              		.cfi_offset 14, -4
+ 496 0002 8AB0     		sub	sp, sp, #40
+ 497              	.LCFI14:
+ 498              		.cfi_def_cfa_offset 48
+ 499 0004 00AF     		add	r7, sp, #0
+ 500              	.LCFI15:
+ 501              		.cfi_def_cfa_register 7
+ 161:Core/Src/main.c **** 
+ 162:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 0 */
+ 163:Core/Src/main.c **** 
+ 164:Core/Src/main.c ****   /* USER CODE END TIM2_Init 0 */
  165:Core/Src/main.c **** 
- 166:Core/Src/main.c ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
- 280              		.loc 1 166 7
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 9
+ 166:Core/Src/main.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+ 502              		.loc 1 166 27
+ 503 0006 07F12003 		add	r3, r7, #32
+ 504 000a 0022     		movs	r2, #0
+ 505 000c 1A60     		str	r2, [r3]
+ 506 000e 5A60     		str	r2, [r3, #4]
+ 167:Core/Src/main.c ****   TIM_OC_InitTypeDef sConfigOC = {0};
+ 507              		.loc 1 167 22
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 13
 
 
- 281 00b0 07F10C03 		add	r3, r7, #12
- 282 00b4 0021     		movs	r1, #0
- 283 00b6 1846     		mov	r0, r3
- 284 00b8 FFF7FEFF 		bl	HAL_RCC_ClockConfig
- 285 00bc 0346     		mov	r3, r0
- 286              		.loc 1 166 6
- 287 00be 002B     		cmp	r3, #0
- 288 00c0 01D0     		beq	.L9
- 167:Core/Src/main.c ****   {
- 168:Core/Src/main.c ****     Error_Handler();
- 289              		.loc 1 168 5
- 290 00c2 FFF7FEFF 		bl	Error_Handler
- 291              	.L9:
- 169:Core/Src/main.c ****   }
- 170:Core/Src/main.c **** }
- 292              		.loc 1 170 1
- 293 00c6 00BF     		nop
- 294 00c8 5037     		adds	r7, r7, #80
- 295              	.LCFI6:
- 296              		.cfi_def_cfa_offset 8
- 297 00ca BD46     		mov	sp, r7
- 298              	.LCFI7:
- 299              		.cfi_def_cfa_register 13
- 300              		@ sp needed
- 301 00cc 80BD     		pop	{r7, pc}
- 302              	.L11:
- 303 00ce 00BF     		.align	2
- 304              	.L10:
- 305 00d0 00380240 		.word	1073887232
- 306 00d4 00700040 		.word	1073770496
- 307              		.cfi_endproc
- 308              	.LFE221:
- 310              		.section	.text.MX_ADC1_Init,"ax",%progbits
- 311              		.align	1
- 312              		.syntax unified
- 313              		.thumb
- 314              		.thumb_func
- 316              	MX_ADC1_Init:
- 317              	.LFB222:
- 171:Core/Src/main.c **** 
- 172:Core/Src/main.c **** /**
- 173:Core/Src/main.c ****   * @brief ADC1 Initialization Function
- 174:Core/Src/main.c ****   * @param None
- 175:Core/Src/main.c ****   * @retval None
- 176:Core/Src/main.c ****   */
- 177:Core/Src/main.c **** static void MX_ADC1_Init(void)
- 178:Core/Src/main.c **** {
- 318              		.loc 1 178 1
- 319              		.cfi_startproc
- 320              		@ args = 0, pretend = 0, frame = 16
- 321              		@ frame_needed = 1, uses_anonymous_args = 0
- 322 0000 80B5     		push	{r7, lr}
- 323              	.LCFI8:
- 324              		.cfi_def_cfa_offset 8
- 325              		.cfi_offset 7, -8
- 326              		.cfi_offset 14, -4
- 327 0002 84B0     		sub	sp, sp, #16
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 10
+ 508 0010 3B1D     		adds	r3, r7, #4
+ 509 0012 0022     		movs	r2, #0
+ 510 0014 1A60     		str	r2, [r3]
+ 511 0016 5A60     		str	r2, [r3, #4]
+ 512 0018 9A60     		str	r2, [r3, #8]
+ 513 001a DA60     		str	r2, [r3, #12]
+ 514 001c 1A61     		str	r2, [r3, #16]
+ 515 001e 5A61     		str	r2, [r3, #20]
+ 516 0020 9A61     		str	r2, [r3, #24]
+ 168:Core/Src/main.c **** 
+ 169:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 1 */
+ 170:Core/Src/main.c **** 
+ 171:Core/Src/main.c ****   /* USER CODE END TIM2_Init 1 */
+ 172:Core/Src/main.c ****   htim2.Instance = TIM2;
+ 517              		.loc 1 172 18
+ 518 0022 284B     		ldr	r3, .L27
+ 519 0024 4FF08042 		mov	r2, #1073741824
+ 520 0028 1A60     		str	r2, [r3]
+ 173:Core/Src/main.c ****   htim2.Init.Prescaler = 0;
+ 521              		.loc 1 173 24
+ 522 002a 264B     		ldr	r3, .L27
+ 523 002c 0022     		movs	r2, #0
+ 524 002e 5A60     		str	r2, [r3, #4]
+ 174:Core/Src/main.c ****   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+ 525              		.loc 1 174 26
+ 526 0030 244B     		ldr	r3, .L27
+ 527 0032 0022     		movs	r2, #0
+ 528 0034 9A60     		str	r2, [r3, #8]
+ 175:Core/Src/main.c ****   htim2.Init.Period = 4939;
+ 529              		.loc 1 175 21
+ 530 0036 234B     		ldr	r3, .L27
+ 531 0038 41F24B32 		movw	r2, #4939
+ 532 003c DA60     		str	r2, [r3, #12]
+ 176:Core/Src/main.c ****   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+ 533              		.loc 1 176 28
+ 534 003e 214B     		ldr	r3, .L27
+ 535 0040 0022     		movs	r2, #0
+ 536 0042 1A61     		str	r2, [r3, #16]
+ 177:Core/Src/main.c ****   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+ 537              		.loc 1 177 32
+ 538 0044 1F4B     		ldr	r3, .L27
+ 539 0046 0022     		movs	r2, #0
+ 540 0048 9A61     		str	r2, [r3, #24]
+ 178:Core/Src/main.c ****   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
+ 541              		.loc 1 178 7
+ 542 004a 1E48     		ldr	r0, .L27
+ 543 004c FFF7FEFF 		bl	HAL_TIM_PWM_Init
+ 544 0050 0346     		mov	r3, r0
+ 545              		.loc 1 178 6
+ 546 0052 002B     		cmp	r3, #0
+ 547 0054 01D0     		beq	.L23
+ 179:Core/Src/main.c ****   {
+ 180:Core/Src/main.c ****     Error_Handler();
+ 548              		.loc 1 180 5
+ 549 0056 FFF7FEFF 		bl	Error_Handler
+ 550              	.L23:
+ 181:Core/Src/main.c ****   }
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 14
 
 
- 328              	.LCFI9:
- 329              		.cfi_def_cfa_offset 24
- 330 0004 00AF     		add	r7, sp, #0
- 331              	.LCFI10:
- 332              		.cfi_def_cfa_register 7
- 179:Core/Src/main.c **** 
- 180:Core/Src/main.c ****   /* USER CODE BEGIN ADC1_Init 0 */
- 181:Core/Src/main.c **** 
- 182:Core/Src/main.c ****   /* USER CODE END ADC1_Init 0 */
- 183:Core/Src/main.c **** 
- 184:Core/Src/main.c ****   ADC_ChannelConfTypeDef sConfig = {0};
- 333              		.loc 1 184 26
- 334 0006 3B46     		mov	r3, r7
- 335 0008 0022     		movs	r2, #0
- 336 000a 1A60     		str	r2, [r3]
- 337 000c 5A60     		str	r2, [r3, #4]
- 338 000e 9A60     		str	r2, [r3, #8]
- 339 0010 DA60     		str	r2, [r3, #12]
- 185:Core/Src/main.c **** 
- 186:Core/Src/main.c ****   /* USER CODE BEGIN ADC1_Init 1 */
- 187:Core/Src/main.c **** 
- 188:Core/Src/main.c ****   /* USER CODE END ADC1_Init 1 */
- 189:Core/Src/main.c **** 
- 190:Core/Src/main.c ****   /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of con
- 191:Core/Src/main.c ****   */
- 192:Core/Src/main.c ****   hadc1.Instance = ADC1;
- 340              		.loc 1 192 18
- 341 0012 214B     		ldr	r3, .L16
- 342 0014 214A     		ldr	r2, .L16+4
- 343 0016 1A60     		str	r2, [r3]
- 193:Core/Src/main.c ****   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
- 344              		.loc 1 193 29
- 345 0018 1F4B     		ldr	r3, .L16
- 346 001a 0022     		movs	r2, #0
- 347 001c 5A60     		str	r2, [r3, #4]
- 194:Core/Src/main.c ****   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
- 348              		.loc 1 194 25
- 349 001e 1E4B     		ldr	r3, .L16
- 350 0020 0022     		movs	r2, #0
- 351 0022 9A60     		str	r2, [r3, #8]
- 195:Core/Src/main.c ****   hadc1.Init.ScanConvMode = DISABLE;
- 352              		.loc 1 195 27
- 353 0024 1C4B     		ldr	r3, .L16
- 354 0026 0022     		movs	r2, #0
- 355 0028 1A61     		str	r2, [r3, #16]
- 196:Core/Src/main.c ****   hadc1.Init.ContinuousConvMode = DISABLE;
- 356              		.loc 1 196 33
- 357 002a 1B4B     		ldr	r3, .L16
- 358 002c 0022     		movs	r2, #0
- 359 002e 1A76     		strb	r2, [r3, #24]
- 197:Core/Src/main.c ****   hadc1.Init.DiscontinuousConvMode = DISABLE;
- 360              		.loc 1 197 36
- 361 0030 194B     		ldr	r3, .L16
- 362 0032 0022     		movs	r2, #0
- 363 0034 83F82020 		strb	r2, [r3, #32]
- 198:Core/Src/main.c ****   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
- 364              		.loc 1 198 35
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 11
+ 182:Core/Src/main.c ****   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+ 551              		.loc 1 182 37
+ 552 005a 0023     		movs	r3, #0
+ 553 005c 3B62     		str	r3, [r7, #32]
+ 183:Core/Src/main.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+ 554              		.loc 1 183 33
+ 555 005e 0023     		movs	r3, #0
+ 556 0060 7B62     		str	r3, [r7, #36]
+ 184:Core/Src/main.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+ 557              		.loc 1 184 7
+ 558 0062 07F12003 		add	r3, r7, #32
+ 559 0066 1946     		mov	r1, r3
+ 560 0068 1648     		ldr	r0, .L27
+ 561 006a FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+ 562 006e 0346     		mov	r3, r0
+ 563              		.loc 1 184 6
+ 564 0070 002B     		cmp	r3, #0
+ 565 0072 01D0     		beq	.L24
+ 185:Core/Src/main.c ****   {
+ 186:Core/Src/main.c ****     Error_Handler();
+ 566              		.loc 1 186 5
+ 567 0074 FFF7FEFF 		bl	Error_Handler
+ 568              	.L24:
+ 187:Core/Src/main.c ****   }
+ 188:Core/Src/main.c ****   sConfigOC.OCMode = TIM_OCMODE_PWM1;
+ 569              		.loc 1 188 20
+ 570 0078 6023     		movs	r3, #96
+ 571 007a 7B60     		str	r3, [r7, #4]
+ 189:Core/Src/main.c ****   sConfigOC.Pulse = 0;
+ 572              		.loc 1 189 19
+ 573 007c 0023     		movs	r3, #0
+ 574 007e BB60     		str	r3, [r7, #8]
+ 190:Core/Src/main.c ****   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+ 575              		.loc 1 190 24
+ 576 0080 0023     		movs	r3, #0
+ 577 0082 FB60     		str	r3, [r7, #12]
+ 191:Core/Src/main.c ****   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+ 578              		.loc 1 191 24
+ 579 0084 0023     		movs	r3, #0
+ 580 0086 7B61     		str	r3, [r7, #20]
+ 192:Core/Src/main.c ****   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+ 581              		.loc 1 192 7
+ 582 0088 3B1D     		adds	r3, r7, #4
+ 583 008a 0022     		movs	r2, #0
+ 584 008c 1946     		mov	r1, r3
+ 585 008e 0D48     		ldr	r0, .L27
+ 586 0090 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 587 0094 0346     		mov	r3, r0
+ 588              		.loc 1 192 6
+ 589 0096 002B     		cmp	r3, #0
+ 590 0098 01D0     		beq	.L25
+ 193:Core/Src/main.c ****   {
+ 194:Core/Src/main.c ****     Error_Handler();
+ 591              		.loc 1 194 5
+ 592 009a FFF7FEFF 		bl	Error_Handler
+ 593              	.L25:
+ 195:Core/Src/main.c ****   }
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 15
 
 
- 365 0038 174B     		ldr	r3, .L16
- 366 003a 0022     		movs	r2, #0
- 367 003c DA62     		str	r2, [r3, #44]
- 199:Core/Src/main.c ****   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
- 368              		.loc 1 199 31
- 369 003e 164B     		ldr	r3, .L16
- 370 0040 174A     		ldr	r2, .L16+8
- 371 0042 9A62     		str	r2, [r3, #40]
- 200:Core/Src/main.c ****   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
- 372              		.loc 1 200 24
- 373 0044 144B     		ldr	r3, .L16
- 374 0046 0022     		movs	r2, #0
- 375 0048 DA60     		str	r2, [r3, #12]
- 201:Core/Src/main.c ****   hadc1.Init.NbrOfConversion = 1;
- 376              		.loc 1 201 30
- 377 004a 134B     		ldr	r3, .L16
- 378 004c 0122     		movs	r2, #1
- 379 004e DA61     		str	r2, [r3, #28]
- 202:Core/Src/main.c ****   hadc1.Init.DMAContinuousRequests = DISABLE;
- 380              		.loc 1 202 36
- 381 0050 114B     		ldr	r3, .L16
- 382 0052 0022     		movs	r2, #0
- 383 0054 83F83020 		strb	r2, [r3, #48]
- 203:Core/Src/main.c ****   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
- 384              		.loc 1 203 27
- 385 0058 0F4B     		ldr	r3, .L16
- 386 005a 0122     		movs	r2, #1
- 387 005c 5A61     		str	r2, [r3, #20]
- 204:Core/Src/main.c ****   if (HAL_ADC_Init(&hadc1) != HAL_OK)
- 388              		.loc 1 204 7
- 389 005e 0E48     		ldr	r0, .L16
- 390 0060 FFF7FEFF 		bl	HAL_ADC_Init
- 391 0064 0346     		mov	r3, r0
- 392              		.loc 1 204 6
- 393 0066 002B     		cmp	r3, #0
- 394 0068 01D0     		beq	.L13
- 205:Core/Src/main.c ****   {
- 206:Core/Src/main.c ****     Error_Handler();
- 395              		.loc 1 206 5
- 396 006a FFF7FEFF 		bl	Error_Handler
- 397              	.L13:
- 207:Core/Src/main.c ****   }
- 208:Core/Src/main.c **** 
- 209:Core/Src/main.c ****   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and it
- 210:Core/Src/main.c ****   */
- 211:Core/Src/main.c ****   sConfig.Channel = ADC_CHANNEL_2;
- 398              		.loc 1 211 19
- 399 006e 0223     		movs	r3, #2
- 400 0070 3B60     		str	r3, [r7]
- 212:Core/Src/main.c ****   sConfig.Rank = 1;
- 401              		.loc 1 212 16
- 402 0072 0123     		movs	r3, #1
- 403 0074 7B60     		str	r3, [r7, #4]
- 213:Core/Src/main.c ****   sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
- 404              		.loc 1 213 24
- 405 0076 0023     		movs	r3, #0
- 406 0078 BB60     		str	r3, [r7, #8]
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 12
+ 196:Core/Src/main.c ****   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+ 594              		.loc 1 196 7
+ 595 009e 3B1D     		adds	r3, r7, #4
+ 596 00a0 0422     		movs	r2, #4
+ 597 00a2 1946     		mov	r1, r3
+ 598 00a4 0748     		ldr	r0, .L27
+ 599 00a6 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
+ 600 00aa 0346     		mov	r3, r0
+ 601              		.loc 1 196 6
+ 602 00ac 002B     		cmp	r3, #0
+ 603 00ae 01D0     		beq	.L26
+ 197:Core/Src/main.c ****   {
+ 198:Core/Src/main.c ****     Error_Handler();
+ 604              		.loc 1 198 5
+ 605 00b0 FFF7FEFF 		bl	Error_Handler
+ 606              	.L26:
+ 199:Core/Src/main.c ****   }
+ 200:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 2 */
+ 201:Core/Src/main.c **** 
+ 202:Core/Src/main.c ****   /* USER CODE END TIM2_Init 2 */
+ 203:Core/Src/main.c ****   HAL_TIM_MspPostInit(&htim2);
+ 607              		.loc 1 203 3
+ 608 00b4 0348     		ldr	r0, .L27
+ 609 00b6 FFF7FEFF 		bl	HAL_TIM_MspPostInit
+ 204:Core/Src/main.c **** 
+ 205:Core/Src/main.c **** }
+ 610              		.loc 1 205 1
+ 611 00ba 00BF     		nop
+ 612 00bc 2837     		adds	r7, r7, #40
+ 613              	.LCFI16:
+ 614              		.cfi_def_cfa_offset 8
+ 615 00be BD46     		mov	sp, r7
+ 616              	.LCFI17:
+ 617              		.cfi_def_cfa_register 13
+ 618              		@ sp needed
+ 619 00c0 80BD     		pop	{r7, pc}
+ 620              	.L28:
+ 621 00c2 00BF     		.align	2
+ 622              	.L27:
+ 623 00c4 00000000 		.word	htim2
+ 624              		.cfi_endproc
+ 625              	.LFE223:
+ 627              		.section	.text.MX_GPIO_Init,"ax",%progbits
+ 628              		.align	1
+ 629              		.syntax unified
+ 630              		.thumb
+ 631              		.thumb_func
+ 633              	MX_GPIO_Init:
+ 634              	.LFB224:
+ 206:Core/Src/main.c **** 
+ 207:Core/Src/main.c **** /**
+ 208:Core/Src/main.c ****   * @brief GPIO Initialization Function
+ 209:Core/Src/main.c ****   * @param None
+ 210:Core/Src/main.c ****   * @retval None
+ 211:Core/Src/main.c ****   */
+ 212:Core/Src/main.c **** static void MX_GPIO_Init(void)
+ 213:Core/Src/main.c **** {
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 16
 
 
- 214:Core/Src/main.c ****   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
- 407              		.loc 1 214 7
- 408 007a 3B46     		mov	r3, r7
- 409 007c 1946     		mov	r1, r3
- 410 007e 0648     		ldr	r0, .L16
- 411 0080 FFF7FEFF 		bl	HAL_ADC_ConfigChannel
- 412 0084 0346     		mov	r3, r0
- 413              		.loc 1 214 6
- 414 0086 002B     		cmp	r3, #0
- 415 0088 01D0     		beq	.L15
- 215:Core/Src/main.c ****   {
- 216:Core/Src/main.c ****     Error_Handler();
- 416              		.loc 1 216 5
- 417 008a FFF7FEFF 		bl	Error_Handler
- 418              	.L15:
- 217:Core/Src/main.c ****   }
- 218:Core/Src/main.c ****   /* USER CODE BEGIN ADC1_Init 2 */
- 219:Core/Src/main.c **** 
- 220:Core/Src/main.c ****   /* USER CODE END ADC1_Init 2 */
- 221:Core/Src/main.c **** 
- 222:Core/Src/main.c **** }
- 419              		.loc 1 222 1
- 420 008e 00BF     		nop
- 421 0090 1037     		adds	r7, r7, #16
- 422              	.LCFI11:
- 423              		.cfi_def_cfa_offset 8
- 424 0092 BD46     		mov	sp, r7
- 425              	.LCFI12:
- 426              		.cfi_def_cfa_register 13
- 427              		@ sp needed
- 428 0094 80BD     		pop	{r7, pc}
- 429              	.L17:
- 430 0096 00BF     		.align	2
- 431              	.L16:
- 432 0098 00000000 		.word	hadc1
- 433 009c 00200140 		.word	1073815552
- 434 00a0 0100000F 		.word	251658241
- 435              		.cfi_endproc
- 436              	.LFE222:
- 438              		.section	.text.MX_TIM2_Init,"ax",%progbits
- 439              		.align	1
- 440              		.syntax unified
- 441              		.thumb
- 442              		.thumb_func
- 444              	MX_TIM2_Init:
- 445              	.LFB223:
- 223:Core/Src/main.c **** 
- 224:Core/Src/main.c **** /**
- 225:Core/Src/main.c ****   * @brief TIM2 Initialization Function
- 226:Core/Src/main.c ****   * @param None
- 227:Core/Src/main.c ****   * @retval None
- 228:Core/Src/main.c ****   */
- 229:Core/Src/main.c **** static void MX_TIM2_Init(void)
- 230:Core/Src/main.c **** {
- 446              		.loc 1 230 1
- 447              		.cfi_startproc
- 448              		@ args = 0, pretend = 0, frame = 40
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 13
+ 635              		.loc 1 213 1
+ 636              		.cfi_startproc
+ 637              		@ args = 0, pretend = 0, frame = 32
+ 638              		@ frame_needed = 1, uses_anonymous_args = 0
+ 639 0000 80B5     		push	{r7, lr}
+ 640              	.LCFI18:
+ 641              		.cfi_def_cfa_offset 8
+ 642              		.cfi_offset 7, -8
+ 643              		.cfi_offset 14, -4
+ 644 0002 88B0     		sub	sp, sp, #32
+ 645              	.LCFI19:
+ 646              		.cfi_def_cfa_offset 40
+ 647 0004 00AF     		add	r7, sp, #0
+ 648              	.LCFI20:
+ 649              		.cfi_def_cfa_register 7
+ 214:Core/Src/main.c ****   GPIO_InitTypeDef GPIO_InitStruct = {0};
+ 650              		.loc 1 214 20
+ 651 0006 07F10C03 		add	r3, r7, #12
+ 652 000a 0022     		movs	r2, #0
+ 653 000c 1A60     		str	r2, [r3]
+ 654 000e 5A60     		str	r2, [r3, #4]
+ 655 0010 9A60     		str	r2, [r3, #8]
+ 656 0012 DA60     		str	r2, [r3, #12]
+ 657 0014 1A61     		str	r2, [r3, #16]
+ 658              	.LBB8:
+ 215:Core/Src/main.c **** /* USER CODE BEGIN MX_GPIO_Init_1 */
+ 216:Core/Src/main.c **** /* USER CODE END MX_GPIO_Init_1 */
+ 217:Core/Src/main.c **** 
+ 218:Core/Src/main.c ****   /* GPIO Ports Clock Enable */
+ 219:Core/Src/main.c ****   __HAL_RCC_GPIOH_CLK_ENABLE();
+ 659              		.loc 1 219 3
+ 660 0016 0023     		movs	r3, #0
+ 661 0018 BB60     		str	r3, [r7, #8]
+ 662 001a 1C4B     		ldr	r3, .L30
+ 663 001c 1B6B     		ldr	r3, [r3, #48]
+ 664 001e 1B4A     		ldr	r2, .L30
+ 665 0020 43F08003 		orr	r3, r3, #128
+ 666 0024 1363     		str	r3, [r2, #48]
+ 667 0026 194B     		ldr	r3, .L30
+ 668 0028 1B6B     		ldr	r3, [r3, #48]
+ 669 002a 03F08003 		and	r3, r3, #128
+ 670 002e BB60     		str	r3, [r7, #8]
+ 671 0030 BB68     		ldr	r3, [r7, #8]
+ 672              	.LBE8:
+ 673              	.LBB9:
+ 220:Core/Src/main.c ****   __HAL_RCC_GPIOA_CLK_ENABLE();
+ 674              		.loc 1 220 3
+ 675 0032 0023     		movs	r3, #0
+ 676 0034 7B60     		str	r3, [r7, #4]
+ 677 0036 154B     		ldr	r3, .L30
+ 678 0038 1B6B     		ldr	r3, [r3, #48]
+ 679 003a 144A     		ldr	r2, .L30
+ 680 003c 43F00103 		orr	r3, r3, #1
+ 681 0040 1363     		str	r3, [r2, #48]
+ 682 0042 124B     		ldr	r3, .L30
+ 683 0044 1B6B     		ldr	r3, [r3, #48]
+ 684 0046 03F00103 		and	r3, r3, #1
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 17
 
 
- 449              		@ frame_needed = 1, uses_anonymous_args = 0
- 450 0000 80B5     		push	{r7, lr}
- 451              	.LCFI13:
- 452              		.cfi_def_cfa_offset 8
- 453              		.cfi_offset 7, -8
- 454              		.cfi_offset 14, -4
- 455 0002 8AB0     		sub	sp, sp, #40
- 456              	.LCFI14:
- 457              		.cfi_def_cfa_offset 48
- 458 0004 00AF     		add	r7, sp, #0
- 459              	.LCFI15:
- 460              		.cfi_def_cfa_register 7
- 231:Core/Src/main.c **** 
- 232:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 0 */
- 233:Core/Src/main.c **** 
- 234:Core/Src/main.c ****   /* USER CODE END TIM2_Init 0 */
- 235:Core/Src/main.c **** 
- 236:Core/Src/main.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
- 461              		.loc 1 236 27
- 462 0006 07F12003 		add	r3, r7, #32
- 463 000a 0022     		movs	r2, #0
- 464 000c 1A60     		str	r2, [r3]
- 465 000e 5A60     		str	r2, [r3, #4]
- 237:Core/Src/main.c ****   TIM_OC_InitTypeDef sConfigOC = {0};
- 466              		.loc 1 237 22
- 467 0010 3B1D     		adds	r3, r7, #4
- 468 0012 0022     		movs	r2, #0
- 469 0014 1A60     		str	r2, [r3]
- 470 0016 5A60     		str	r2, [r3, #4]
- 471 0018 9A60     		str	r2, [r3, #8]
- 472 001a DA60     		str	r2, [r3, #12]
- 473 001c 1A61     		str	r2, [r3, #16]
- 474 001e 5A61     		str	r2, [r3, #20]
- 475 0020 9A61     		str	r2, [r3, #24]
- 238:Core/Src/main.c **** 
- 239:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 1 */
- 240:Core/Src/main.c **** 
- 241:Core/Src/main.c ****   /* USER CODE END TIM2_Init 1 */
- 242:Core/Src/main.c ****   htim2.Instance = TIM2;
- 476              		.loc 1 242 18
- 477 0022 284B     		ldr	r3, .L23
- 478 0024 4FF08042 		mov	r2, #1073741824
- 479 0028 1A60     		str	r2, [r3]
- 243:Core/Src/main.c ****   htim2.Init.Prescaler = 0;
- 480              		.loc 1 243 24
- 481 002a 264B     		ldr	r3, .L23
- 482 002c 0022     		movs	r2, #0
- 483 002e 5A60     		str	r2, [r3, #4]
- 244:Core/Src/main.c ****   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
- 484              		.loc 1 244 26
- 485 0030 244B     		ldr	r3, .L23
- 486 0032 0022     		movs	r2, #0
- 487 0034 9A60     		str	r2, [r3, #8]
- 245:Core/Src/main.c ****   htim2.Init.Period = 4939;
- 488              		.loc 1 245 21
- 489 0036 234B     		ldr	r3, .L23
- 490 0038 41F24B32 		movw	r2, #4939
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 14
+ 685 004a 7B60     		str	r3, [r7, #4]
+ 686 004c 7B68     		ldr	r3, [r7, #4]
+ 687              	.LBE9:
+ 688              	.LBB10:
+ 221:Core/Src/main.c ****   __HAL_RCC_GPIOB_CLK_ENABLE();
+ 689              		.loc 1 221 3
+ 690 004e 0023     		movs	r3, #0
+ 691 0050 3B60     		str	r3, [r7]
+ 692 0052 0E4B     		ldr	r3, .L30
+ 693 0054 1B6B     		ldr	r3, [r3, #48]
+ 694 0056 0D4A     		ldr	r2, .L30
+ 695 0058 43F00203 		orr	r3, r3, #2
+ 696 005c 1363     		str	r3, [r2, #48]
+ 697 005e 0B4B     		ldr	r3, .L30
+ 698 0060 1B6B     		ldr	r3, [r3, #48]
+ 699 0062 03F00203 		and	r3, r3, #2
+ 700 0066 3B60     		str	r3, [r7]
+ 701 0068 3B68     		ldr	r3, [r7]
+ 702              	.LBE10:
+ 222:Core/Src/main.c **** 
+ 223:Core/Src/main.c ****   /*Configure GPIO pins : PB12 PB13 */
+ 224:Core/Src/main.c ****   GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
+ 703              		.loc 1 224 23
+ 704 006a 4FF44053 		mov	r3, #12288
+ 705 006e FB60     		str	r3, [r7, #12]
+ 225:Core/Src/main.c ****   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+ 706              		.loc 1 225 24
+ 707 0070 0023     		movs	r3, #0
+ 708 0072 3B61     		str	r3, [r7, #16]
+ 226:Core/Src/main.c ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
+ 709              		.loc 1 226 24
+ 710 0074 0023     		movs	r3, #0
+ 711 0076 7B61     		str	r3, [r7, #20]
+ 227:Core/Src/main.c ****   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+ 712              		.loc 1 227 3
+ 713 0078 07F10C03 		add	r3, r7, #12
+ 714 007c 1946     		mov	r1, r3
+ 715 007e 0448     		ldr	r0, .L30+4
+ 716 0080 FFF7FEFF 		bl	HAL_GPIO_Init
+ 228:Core/Src/main.c **** 
+ 229:Core/Src/main.c **** /* USER CODE BEGIN MX_GPIO_Init_2 */
+ 230:Core/Src/main.c **** /* USER CODE END MX_GPIO_Init_2 */
+ 231:Core/Src/main.c **** }
+ 717              		.loc 1 231 1
+ 718 0084 00BF     		nop
+ 719 0086 2037     		adds	r7, r7, #32
+ 720              	.LCFI21:
+ 721              		.cfi_def_cfa_offset 8
+ 722 0088 BD46     		mov	sp, r7
+ 723              	.LCFI22:
+ 724              		.cfi_def_cfa_register 13
+ 725              		@ sp needed
+ 726 008a 80BD     		pop	{r7, pc}
+ 727              	.L31:
+ 728              		.align	2
+ 729              	.L30:
+ 730 008c 00380240 		.word	1073887232
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 18
 
 
- 491 003c DA60     		str	r2, [r3, #12]
- 246:Core/Src/main.c ****   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
- 492              		.loc 1 246 28
- 493 003e 214B     		ldr	r3, .L23
- 494 0040 0022     		movs	r2, #0
- 495 0042 1A61     		str	r2, [r3, #16]
- 247:Core/Src/main.c ****   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
- 496              		.loc 1 247 32
- 497 0044 1F4B     		ldr	r3, .L23
- 498 0046 0022     		movs	r2, #0
- 499 0048 9A61     		str	r2, [r3, #24]
- 248:Core/Src/main.c ****   if (HAL_TIM_PWM_Init(&htim2) != HAL_OK)
- 500              		.loc 1 248 7
- 501 004a 1E48     		ldr	r0, .L23
- 502 004c FFF7FEFF 		bl	HAL_TIM_PWM_Init
- 503 0050 0346     		mov	r3, r0
- 504              		.loc 1 248 6
- 505 0052 002B     		cmp	r3, #0
- 506 0054 01D0     		beq	.L19
- 249:Core/Src/main.c ****   {
- 250:Core/Src/main.c ****     Error_Handler();
- 507              		.loc 1 250 5
- 508 0056 FFF7FEFF 		bl	Error_Handler
- 509              	.L19:
- 251:Core/Src/main.c ****   }
- 252:Core/Src/main.c ****   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
- 510              		.loc 1 252 37
- 511 005a 0023     		movs	r3, #0
- 512 005c 3B62     		str	r3, [r7, #32]
- 253:Core/Src/main.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
- 513              		.loc 1 253 33
- 514 005e 0023     		movs	r3, #0
- 515 0060 7B62     		str	r3, [r7, #36]
- 254:Core/Src/main.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
- 516              		.loc 1 254 7
- 517 0062 07F12003 		add	r3, r7, #32
- 518 0066 1946     		mov	r1, r3
- 519 0068 1648     		ldr	r0, .L23
- 520 006a FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
- 521 006e 0346     		mov	r3, r0
- 522              		.loc 1 254 6
- 523 0070 002B     		cmp	r3, #0
- 524 0072 01D0     		beq	.L20
- 255:Core/Src/main.c ****   {
- 256:Core/Src/main.c ****     Error_Handler();
- 525              		.loc 1 256 5
- 526 0074 FFF7FEFF 		bl	Error_Handler
- 527              	.L20:
- 257:Core/Src/main.c ****   }
- 258:Core/Src/main.c ****   sConfigOC.OCMode = TIM_OCMODE_PWM1;
- 528              		.loc 1 258 20
- 529 0078 6023     		movs	r3, #96
- 530 007a 7B60     		str	r3, [r7, #4]
- 259:Core/Src/main.c ****   sConfigOC.Pulse = 0;
- 531              		.loc 1 259 19
- 532 007c 0023     		movs	r3, #0
- 533 007e BB60     		str	r3, [r7, #8]
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 15
-
-
- 260:Core/Src/main.c ****   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
- 534              		.loc 1 260 24
- 535 0080 0023     		movs	r3, #0
- 536 0082 FB60     		str	r3, [r7, #12]
- 261:Core/Src/main.c ****   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
- 537              		.loc 1 261 24
- 538 0084 0023     		movs	r3, #0
- 539 0086 7B61     		str	r3, [r7, #20]
- 262:Core/Src/main.c ****   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
- 540              		.loc 1 262 7
- 541 0088 3B1D     		adds	r3, r7, #4
- 542 008a 0022     		movs	r2, #0
- 543 008c 1946     		mov	r1, r3
- 544 008e 0D48     		ldr	r0, .L23
- 545 0090 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
- 546 0094 0346     		mov	r3, r0
- 547              		.loc 1 262 6
- 548 0096 002B     		cmp	r3, #0
- 549 0098 01D0     		beq	.L21
- 263:Core/Src/main.c ****   {
- 264:Core/Src/main.c ****     Error_Handler();
- 550              		.loc 1 264 5
- 551 009a FFF7FEFF 		bl	Error_Handler
- 552              	.L21:
- 265:Core/Src/main.c ****   }
- 266:Core/Src/main.c ****   if (HAL_TIM_PWM_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
- 553              		.loc 1 266 7
- 554 009e 3B1D     		adds	r3, r7, #4
- 555 00a0 0422     		movs	r2, #4
- 556 00a2 1946     		mov	r1, r3
- 557 00a4 0748     		ldr	r0, .L23
- 558 00a6 FFF7FEFF 		bl	HAL_TIM_PWM_ConfigChannel
- 559 00aa 0346     		mov	r3, r0
- 560              		.loc 1 266 6
- 561 00ac 002B     		cmp	r3, #0
- 562 00ae 01D0     		beq	.L22
- 267:Core/Src/main.c ****   {
- 268:Core/Src/main.c ****     Error_Handler();
- 563              		.loc 1 268 5
- 564 00b0 FFF7FEFF 		bl	Error_Handler
- 565              	.L22:
- 269:Core/Src/main.c ****   }
- 270:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 2 */
- 271:Core/Src/main.c **** 
- 272:Core/Src/main.c ****   /* USER CODE END TIM2_Init 2 */
- 273:Core/Src/main.c ****   HAL_TIM_MspPostInit(&htim2);
- 566              		.loc 1 273 3
- 567 00b4 0348     		ldr	r0, .L23
- 568 00b6 FFF7FEFF 		bl	HAL_TIM_MspPostInit
- 274:Core/Src/main.c **** 
- 275:Core/Src/main.c **** }
- 569              		.loc 1 275 1
- 570 00ba 00BF     		nop
- 571 00bc 2837     		adds	r7, r7, #40
- 572              	.LCFI16:
- 573              		.cfi_def_cfa_offset 8
- 574 00be BD46     		mov	sp, r7
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 16
-
-
- 575              	.LCFI17:
- 576              		.cfi_def_cfa_register 13
- 577              		@ sp needed
- 578 00c0 80BD     		pop	{r7, pc}
- 579              	.L24:
- 580 00c2 00BF     		.align	2
- 581              	.L23:
- 582 00c4 00000000 		.word	htim2
- 583              		.cfi_endproc
- 584              	.LFE223:
- 586              		.section	.text.MX_GPIO_Init,"ax",%progbits
- 587              		.align	1
- 588              		.syntax unified
- 589              		.thumb
- 590              		.thumb_func
- 592              	MX_GPIO_Init:
- 593              	.LFB224:
- 276:Core/Src/main.c **** 
- 277:Core/Src/main.c **** /**
- 278:Core/Src/main.c ****   * @brief GPIO Initialization Function
- 279:Core/Src/main.c ****   * @param None
- 280:Core/Src/main.c ****   * @retval None
- 281:Core/Src/main.c ****   */
- 282:Core/Src/main.c **** static void MX_GPIO_Init(void)
- 283:Core/Src/main.c **** {
- 594              		.loc 1 283 1
- 595              		.cfi_startproc
- 596              		@ args = 0, pretend = 0, frame = 32
- 597              		@ frame_needed = 1, uses_anonymous_args = 0
- 598 0000 80B5     		push	{r7, lr}
- 599              	.LCFI18:
- 600              		.cfi_def_cfa_offset 8
- 601              		.cfi_offset 7, -8
- 602              		.cfi_offset 14, -4
- 603 0002 88B0     		sub	sp, sp, #32
- 604              	.LCFI19:
- 605              		.cfi_def_cfa_offset 40
- 606 0004 00AF     		add	r7, sp, #0
- 607              	.LCFI20:
- 608              		.cfi_def_cfa_register 7
- 284:Core/Src/main.c ****   GPIO_InitTypeDef GPIO_InitStruct = {0};
- 609              		.loc 1 284 20
- 610 0006 07F10C03 		add	r3, r7, #12
- 611 000a 0022     		movs	r2, #0
- 612 000c 1A60     		str	r2, [r3]
- 613 000e 5A60     		str	r2, [r3, #4]
- 614 0010 9A60     		str	r2, [r3, #8]
- 615 0012 DA60     		str	r2, [r3, #12]
- 616 0014 1A61     		str	r2, [r3, #16]
- 617              	.LBB7:
- 285:Core/Src/main.c **** /* USER CODE BEGIN MX_GPIO_Init_1 */
- 286:Core/Src/main.c **** /* USER CODE END MX_GPIO_Init_1 */
- 287:Core/Src/main.c **** 
- 288:Core/Src/main.c ****   /* GPIO Ports Clock Enable */
- 289:Core/Src/main.c ****   __HAL_RCC_GPIOH_CLK_ENABLE();
- 618              		.loc 1 289 3
- 619 0016 0023     		movs	r3, #0
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 17
-
-
- 620 0018 BB60     		str	r3, [r7, #8]
- 621 001a 1C4B     		ldr	r3, .L26
- 622 001c 1B6B     		ldr	r3, [r3, #48]
- 623 001e 1B4A     		ldr	r2, .L26
- 624 0020 43F08003 		orr	r3, r3, #128
- 625 0024 1363     		str	r3, [r2, #48]
- 626 0026 194B     		ldr	r3, .L26
- 627 0028 1B6B     		ldr	r3, [r3, #48]
- 628 002a 03F08003 		and	r3, r3, #128
- 629 002e BB60     		str	r3, [r7, #8]
- 630 0030 BB68     		ldr	r3, [r7, #8]
- 631              	.LBE7:
- 632              	.LBB8:
- 290:Core/Src/main.c ****   __HAL_RCC_GPIOA_CLK_ENABLE();
- 633              		.loc 1 290 3
- 634 0032 0023     		movs	r3, #0
- 635 0034 7B60     		str	r3, [r7, #4]
- 636 0036 154B     		ldr	r3, .L26
- 637 0038 1B6B     		ldr	r3, [r3, #48]
- 638 003a 144A     		ldr	r2, .L26
- 639 003c 43F00103 		orr	r3, r3, #1
- 640 0040 1363     		str	r3, [r2, #48]
- 641 0042 124B     		ldr	r3, .L26
- 642 0044 1B6B     		ldr	r3, [r3, #48]
- 643 0046 03F00103 		and	r3, r3, #1
- 644 004a 7B60     		str	r3, [r7, #4]
- 645 004c 7B68     		ldr	r3, [r7, #4]
- 646              	.LBE8:
- 647              	.LBB9:
- 291:Core/Src/main.c ****   __HAL_RCC_GPIOB_CLK_ENABLE();
- 648              		.loc 1 291 3
- 649 004e 0023     		movs	r3, #0
- 650 0050 3B60     		str	r3, [r7]
- 651 0052 0E4B     		ldr	r3, .L26
- 652 0054 1B6B     		ldr	r3, [r3, #48]
- 653 0056 0D4A     		ldr	r2, .L26
- 654 0058 43F00203 		orr	r3, r3, #2
- 655 005c 1363     		str	r3, [r2, #48]
- 656 005e 0B4B     		ldr	r3, .L26
- 657 0060 1B6B     		ldr	r3, [r3, #48]
- 658 0062 03F00203 		and	r3, r3, #2
- 659 0066 3B60     		str	r3, [r7]
- 660 0068 3B68     		ldr	r3, [r7]
- 661              	.LBE9:
- 292:Core/Src/main.c **** 
- 293:Core/Src/main.c ****   /*Configure GPIO pins : PB12 PB13 */
- 294:Core/Src/main.c ****   GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
- 662              		.loc 1 294 23
- 663 006a 4FF44053 		mov	r3, #12288
- 664 006e FB60     		str	r3, [r7, #12]
- 295:Core/Src/main.c ****   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
- 665              		.loc 1 295 24
- 666 0070 0023     		movs	r3, #0
- 667 0072 3B61     		str	r3, [r7, #16]
- 296:Core/Src/main.c ****   GPIO_InitStruct.Pull = GPIO_NOPULL;
- 668              		.loc 1 296 24
- 669 0074 0023     		movs	r3, #0
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 18
-
-
- 670 0076 7B61     		str	r3, [r7, #20]
- 297:Core/Src/main.c ****   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
- 671              		.loc 1 297 3
- 672 0078 07F10C03 		add	r3, r7, #12
- 673 007c 1946     		mov	r1, r3
- 674 007e 0448     		ldr	r0, .L26+4
- 675 0080 FFF7FEFF 		bl	HAL_GPIO_Init
- 298:Core/Src/main.c **** 
- 299:Core/Src/main.c **** /* USER CODE BEGIN MX_GPIO_Init_2 */
- 300:Core/Src/main.c **** /* USER CODE END MX_GPIO_Init_2 */
- 301:Core/Src/main.c **** }
- 676              		.loc 1 301 1
- 677 0084 00BF     		nop
- 678 0086 2037     		adds	r7, r7, #32
- 679              	.LCFI21:
- 680              		.cfi_def_cfa_offset 8
- 681 0088 BD46     		mov	sp, r7
- 682              	.LCFI22:
- 683              		.cfi_def_cfa_register 13
- 684              		@ sp needed
- 685 008a 80BD     		pop	{r7, pc}
- 686              	.L27:
- 687              		.align	2
- 688              	.L26:
- 689 008c 00380240 		.word	1073887232
- 690 0090 00040240 		.word	1073873920
- 691              		.cfi_endproc
- 692              	.LFE224:
- 694              		.section	.text.Error_Handler,"ax",%progbits
- 695              		.align	1
- 696              		.global	Error_Handler
- 697              		.syntax unified
- 698              		.thumb
- 699              		.thumb_func
- 701              	Error_Handler:
- 702              	.LFB225:
- 302:Core/Src/main.c **** 
- 303:Core/Src/main.c **** /* USER CODE BEGIN 4 */
- 304:Core/Src/main.c **** 
- 305:Core/Src/main.c **** /* USER CODE END 4 */
- 306:Core/Src/main.c **** 
- 307:Core/Src/main.c **** /**
- 308:Core/Src/main.c ****   * @brief  This function is executed in case of error occurrence.
- 309:Core/Src/main.c ****   * @retval None
- 310:Core/Src/main.c ****   */
- 311:Core/Src/main.c **** void Error_Handler(void)
- 312:Core/Src/main.c **** {
- 703              		.loc 1 312 1
- 704              		.cfi_startproc
- 705              		@ args = 0, pretend = 0, frame = 0
- 706              		@ frame_needed = 1, uses_anonymous_args = 0
- 707              		@ link register save eliminated.
- 708 0000 80B4     		push	{r7}
- 709              	.LCFI23:
- 710              		.cfi_def_cfa_offset 4
- 711              		.cfi_offset 7, -4
- 712 0002 00AF     		add	r7, sp, #0
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 19
-
-
- 713              	.LCFI24:
- 714              		.cfi_def_cfa_register 7
- 715              	.LBB10:
- 716              	.LBB11:
- 717              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+ 731 0090 00040240 		.word	1073873920
+ 732              		.cfi_endproc
+ 733              	.LFE224:
+ 735              		.section	.text.Error_Handler,"ax",%progbits
+ 736              		.align	1
+ 737              		.global	Error_Handler
+ 738              		.syntax unified
+ 739              		.thumb
+ 740              		.thumb_func
+ 742              	Error_Handler:
+ 743              	.LFB225:
+ 232:Core/Src/main.c **** 
+ 233:Core/Src/main.c **** /* USER CODE BEGIN 4 */
+ 234:Core/Src/main.c **** 
+ 235:Core/Src/main.c **** /* USER CODE END 4 */
+ 236:Core/Src/main.c **** 
+ 237:Core/Src/main.c **** /**
+ 238:Core/Src/main.c ****   * @brief  This function is executed in case of error occurrence.
+ 239:Core/Src/main.c ****   * @retval None
+ 240:Core/Src/main.c ****   */
+ 241:Core/Src/main.c **** void Error_Handler(void)
+ 242:Core/Src/main.c **** {
+ 744              		.loc 1 242 1
+ 745              		.cfi_startproc
+ 746              		@ args = 0, pretend = 0, frame = 0
+ 747              		@ frame_needed = 1, uses_anonymous_args = 0
+ 748              		@ link register save eliminated.
+ 749 0000 80B4     		push	{r7}
+ 750              	.LCFI23:
+ 751              		.cfi_def_cfa_offset 4
+ 752              		.cfi_offset 7, -4
+ 753 0002 00AF     		add	r7, sp, #0
+ 754              	.LCFI24:
+ 755              		.cfi_def_cfa_register 7
+ 756              	.LBB11:
+ 757              	.LBB12:
+ 758              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
    1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
    2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
    3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
@@ -1106,6 +1078,9 @@ ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
   18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
   19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
   20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 19
+
+
   21:Drivers/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
   22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
   23:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
@@ -1138,9 +1113,6 @@ ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
   50:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
   51:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif                                           
   52:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __NO_RETURN
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 20
-
-
   53:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
   54:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
   55:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __USED
@@ -1166,6 +1138,9 @@ ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
   75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
   76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
   77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 20
+
+
   78:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
   79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
   80:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
@@ -1198,9 +1173,6 @@ ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
  107:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
  108:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(add
  109:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 21
-
-
  110:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
  111:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ALIGNED(x)                           __attribute__((aligned(x)))
  112:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
@@ -1226,6 +1198,9 @@ ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
  132:Drivers/CMSIS/Include/cmsis_gcc.h **** }
  133:Drivers/CMSIS/Include/cmsis_gcc.h **** 
  134:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 21
+
+
  135:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
  136:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Disable IRQ Interrupts
  137:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
@@ -1234,81 +1209,78 @@ ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 1
  140:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __disable_irq(void)
  141:Drivers/CMSIS/Include/cmsis_gcc.h **** {
  142:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
- 718              		.loc 2 142 3
- 719              		.syntax unified
- 720              	@ 142 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
- 721 0004 72B6     		cpsid i
- 722              	@ 0 "" 2
+ 759              		.loc 2 142 3
+ 760              		.syntax unified
+ 761              	@ 142 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 762 0004 72B6     		cpsid i
+ 763              	@ 0 "" 2
  143:Drivers/CMSIS/Include/cmsis_gcc.h **** }
- 723              		.loc 2 143 1
- 724              		.thumb
- 725              		.syntax unified
- 726 0006 00BF     		nop
- 727              	.L29:
- 728              	.LBE11:
- 729              	.LBE10:
- 313:Core/Src/main.c ****   /* USER CODE BEGIN Error_Handler_Debug */
- 314:Core/Src/main.c ****   /* User can add his own implementation to report the HAL error return state */
- 315:Core/Src/main.c ****   __disable_irq();
- 316:Core/Src/main.c ****   while (1)
- 730              		.loc 1 316 9 discriminator 1
- 731 0008 FEE7     		b	.L29
- 732              		.cfi_endproc
- 733              	.LFE225:
- 735              		.text
- 736              	.Letext0:
- 737              		.file 3 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-ea
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 22
-
-
- 738              		.file 4 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-ea
- 739              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
- 740              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
- 741              		.file 7 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\lib\\gcc\\a
- 742              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
- 743              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h"
- 744              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
- 745              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
- 746              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
- 747              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
- 748              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
- 749              		.file 15 "Core/Inc/main.h"
- 750              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h"
- 751              		.file 17 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
- 752              		.file 18 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-e
- 753              		.file 19 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-e
- 754              		.file 20 "USB_DEVICE/App/usb_device.h"
-ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s 			page 23
+ 764              		.loc 2 143 1
+ 765              		.thumb
+ 766              		.syntax unified
+ 767 0006 00BF     		nop
+ 768              	.L33:
+ 769              	.LBE12:
+ 770              	.LBE11:
+ 243:Core/Src/main.c ****   /* USER CODE BEGIN Error_Handler_Debug */
+ 244:Core/Src/main.c ****   /* User can add his own implementation to report the HAL error return state */
+ 245:Core/Src/main.c ****   __disable_irq();
+ 246:Core/Src/main.c ****   while (1)
+ 771              		.loc 1 246 9 discriminator 1
+ 772 0008 FEE7     		b	.L33
+ 773              		.cfi_endproc
+ 774              	.LFE225:
+ 776              		.text
+ 777              	.Letext0:
+ 778              		.file 3 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-ea
+ 779              		.file 4 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-ea
+ 780              		.file 5 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
+ 781              		.file 6 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h"
+ 782              		.file 7 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\lib\\gcc\\a
+ 783              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 784              		.file 9 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h"
+ 785              		.file 10 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h"
+ 786              		.file 11 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 787              		.file 12 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 788              		.file 13 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h"
+ 789              		.file 14 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ 790              		.file 15 "Core/Inc/main.h"
+ 791              		.file 16 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h"
+ 792              		.file 17 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-e
+ 793              		.file 18 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h"
+ 794              		.file 19 "c:\\arm-gcc\\tools\\arm-gnu-toolchain-11.3.rel1-mingw-w64-i686-arm-none-eabi\\arm-none-e
+ 795              		.file 20 "USB_DEVICE/App/usb_device.h"
+ARM GAS  C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s 			page 22
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:24     .bss.buffer:00000000 buffer
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:21     .bss.buffer:00000000 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:31     .bss.gUSB:00000000 gUSB
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:28     .bss.gUSB:00000000 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:38     .bss.hadc1:00000000 hadc1
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:35     .bss.hadc1:00000000 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:45     .bss.htim2:00000000 htim2
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:42     .bss.htim2:00000000 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:48     .rodata:00000000 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:52     .text.main:00000000 $t
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:58     .text.main:00000000 main
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:163    .text.SystemClock_Config:00000000 SystemClock_Config
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:592    .text.MX_GPIO_Init:00000000 MX_GPIO_Init
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:444    .text.MX_TIM2_Init:00000000 MX_TIM2_Init
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:316    .text.MX_ADC1_Init:00000000 MX_ADC1_Init
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:149    .text.main:00000084 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:157    .text.SystemClock_Config:00000000 $t
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:701    .text.Error_Handler:00000000 Error_Handler
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:305    .text.SystemClock_Config:000000d0 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:311    .text.MX_ADC1_Init:00000000 $t
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:432    .text.MX_ADC1_Init:00000098 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:439    .text.MX_TIM2_Init:00000000 $t
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:582    .text.MX_TIM2_Init:000000c4 $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:587    .text.MX_GPIO_Init:00000000 $t
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:689    .text.MX_GPIO_Init:0000008c $d
-C:\Users\stryk\AppData\Local\Temp\ccC86HmK.s:695    .text.Error_Handler:00000000 $t
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:24     .bss.buffer:00000000 buffer
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:21     .bss.buffer:00000000 $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:31     .bss.gUSB:00000000 gUSB
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:28     .bss.gUSB:00000000 $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:38     .bss.hadc1:00000000 hadc1
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:35     .bss.hadc1:00000000 $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:45     .bss.htim2:00000000 htim2
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:42     .bss.htim2:00000000 $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:48     .rodata:00000000 $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:55     .text.main:00000000 $t
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:61     .text.main:00000000 main
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:204    .text.SystemClock_Config:00000000 SystemClock_Config
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:633    .text.MX_GPIO_Init:00000000 MX_GPIO_Init
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:485    .text.MX_TIM2_Init:00000000 MX_TIM2_Init
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:357    .text.MX_ADC1_Init:00000000 MX_ADC1_Init
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:188    .text.main:000000bc $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:198    .text.SystemClock_Config:00000000 $t
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:742    .text.Error_Handler:00000000 Error_Handler
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:346    .text.SystemClock_Config:000000d0 $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:352    .text.MX_ADC1_Init:00000000 $t
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:473    .text.MX_ADC1_Init:00000098 $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:480    .text.MX_TIM2_Init:00000000 $t
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:623    .text.MX_TIM2_Init:000000c4 $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:628    .text.MX_GPIO_Init:00000000 $t
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:730    .text.MX_GPIO_Init:0000008c $d
+C:\Users\stryk\AppData\Local\Temp\ccHf8Jmb.s:736    .text.Error_Handler:00000000 $t
 
 UNDEFINED SYMBOLS
 HAL_Init
