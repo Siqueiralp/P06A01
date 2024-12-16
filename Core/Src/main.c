@@ -20,6 +20,7 @@
 #include "main.h"
 #include "usb_device.h"
 uint8_t buffer[255];
+uint8_t gUSB[255];
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
