@@ -4,7 +4,11 @@ uint8_t buffer[255];
 uint8_t gUSB[255];
 ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim2;
-
+float porcentagem = 0.10f;
+uint8_t minread = 20;
+uint8_t maxread = 3296;
+uint8_t range = 3276;
+float dutyCycle = 50.0f;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
@@ -20,13 +24,19 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   MX_ADC1_Init();
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   MX_USB_DEVICE_Init();
-  
+  //Mensagem inicial
+  sprintf(buffer, "Digite um comando:\r\n");
+  CDC_Transmit_FS(buffer,strlen(buffer));
+
+  //main loop
   while (1)
   {
-      HAL_ADC_Start(&hadc1);
+    HAL_ADC_Start(&hadc1);
     HAL_ADC_PollForConversion(&hadc1,100);
     read = HAL_ADC_GetValue(&hadc1);
+   /*
     if (count >= 50)
     {
       sprintf(buffer, "Tesao no pino adc %d mV\r\n", (read*3300/4095));
@@ -34,26 +44,67 @@ int main(void)
       count = 0;
     }
     count++;
-
+  */
     HAL_Delay(10);
     if (gUSB[0]!=0)
     {
       switch(gUSB[0])
       {
-        case 103:
+        case 80:
         {
-          sprintf(buffer, "Digitou G ne safada\r\n");
-          CDC_Transmit_FS(buffer,strlen(buffer));
+          readPin(read);
           break;
+        }
+        case 37:
+        {
+          readPin(read);
+          break;
+        }
+        case 115:
+        {
+            dutyCycle += 6.25f;
+            if (dutyCycle > 100.0f)
+                dutyCycle = 100.0f; // Limita a 100%
+           sprintf(buffer, "Aumento do pwm em 6.25%%, Duty Cyle atual em %d\r\n",(int)dutyCycle);
+           CDC_Transmit_FS(buffer,strlen(buffer));
+           break;
+        }
+        case 100:
+        {
+          dutyCycle -= 6.25f;
+          if (dutyCycle < 0.0f)
+            dutyCycle = 0.0f;
+           sprintf(buffer, "Reducao do pwm em 6.25%%, Duty Cycle atual em %d\r\n",(int)dutyCycle);
+           CDC_Transmit_FS(buffer,strlen(buffer));
+           break;
         }
         default:
         {
+          sprintf(buffer, "Nao entendir\r\n");
+          CDC_Transmit_FS(buffer,strlen(buffer));
           break;
         }
       }
+      __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, (uint32_t)((dutyCycle / 100.0f) * __HAL_TIM_GET_AUTORELOAD(&htim2)));
       memset(gUSB,0,255);
     }
   }
+  //fim main loop
+}
+
+
+int readPin(int valorLido) {
+
+    // Calculando a porcentagem
+    porcentagem = (valorLido-minread)*0.030525;
+
+    // Separando a parte inteira e a parte decimal
+    int parteInteira = (int)porcentagem;
+    int parteDecimal = ((porcentagem - parteInteira) * 100);
+
+    // Imprimindo a porcentagem usando printf
+    sprintf(buffer, "O percentual do fundo de escala A/D e %d.%d, representando uma tensao de %d mV \r\n", parteInteira,parteDecimal, valorLido);
+    CDC_Transmit_FS(buffer,strlen(buffer));
 }
 
 void SystemClock_Config(void)
