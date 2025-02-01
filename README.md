@@ -1,0 +1,2 @@
+// PINOS A0 E A1 -> LEDS
+// PINOS B12 E B13 -> INPUT
