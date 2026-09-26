@@ -1,5 +1,9 @@
 #include "main.h"
 #include "usb_device.h"
+#include "usbd_cdc_if.h"
+
+#include <stdio.h>
+#include <string.h>
 uint8_t buffer[255];
 uint8_t gUSB[255];
 ADC_HandleTypeDef hadc1;
@@ -29,8 +33,8 @@ int main(void)
   HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
   MX_USB_DEVICE_Init();
   //Mensagem inicial
-  sprintf(buffer, "Digite um comando:\r\n");
-  CDC_Transmit_FS(buffer,strlen(buffer));
+  snprintf((char *)buffer, sizeof(buffer), "Digite um comando:\r\n");
+  CDC_Transmit_FS(buffer, strlen((char *)buffer));
 
   //main loop
   while (1)
