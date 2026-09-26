@@ -4,20 +4,22 @@ uint8_t buffer[255];
 uint8_t gUSB[255];
 ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim2;
-float porcentagem = 0.10f;
-uint8_t minread = 20;
-uint8_t maxread = 3296;
-uint8_t range = 3276;
+
+static const uint16_t ADC_MIN_READ = 20U;
+static const uint16_t ADC_MAX_READ = 3296U;
+static const uint16_t ADC_FULL_SCALE = 4095U;
+static const uint16_t ADC_REFERENCE_MV = 3300U;
+
 float dutyCycle = 50.0f;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_ADC1_Init(void);
+static void readPin(uint16_t valorLido);
 
 int main(void)
 {
-  int read;
-  int32_t count = 0;
+  uint16_t read;
  
   HAL_Init();
   SystemClock_Config();
@@ -34,77 +36,96 @@ int main(void)
   while (1)
   {
     HAL_ADC_Start(&hadc1);
-    HAL_ADC_PollForConversion(&hadc1,100);
-    read = HAL_ADC_GetValue(&hadc1);
-   /*
-    if (count >= 50)
+    if (HAL_ADC_PollForConversion(&hadc1, 100U) != HAL_OK)
     {
-      sprintf(buffer, "Tesao no pino adc %d mV\r\n", (read*3300/4095));
-      CDC_Transmit_FS(buffer,strlen(buffer));
-      count = 0;
+      HAL_ADC_Stop(&hadc1);
+      continue;
     }
-    count++;
-  */
+
+    read = (uint16_t)HAL_ADC_GetValue(&hadc1);
+    HAL_ADC_Stop(&hadc1);
     HAL_Delay(10);
     if (gUSB[0]!=0)
     {
       switch(gUSB[0])
       {
-        case 80:
+        case 'P':
         {
           readPin(read);
           break;
         }
-        case 37:
+        case '%':
         {
           readPin(read);
           break;
         }
-        case 115:
+        case 's':
         {
             dutyCycle += 6.25f;
             if (dutyCycle > 100.0f)
                 dutyCycle = 100.0f; // Limita a 100%
-           sprintf(buffer, "Aumento do pwm em 6.25%%, Duty Cyle atual em %d\r\n",(int)dutyCycle);
-           CDC_Transmit_FS(buffer,strlen(buffer));
+           snprintf((char *)buffer, sizeof(buffer), "Aumento do PWM em 6.25%%, duty cycle atual em %d%%\r\n", (int)dutyCycle);
+           CDC_Transmit_FS(buffer, strlen((char *)buffer));
            break;
         }
-        case 100:
+        case 'd':
         {
           dutyCycle -= 6.25f;
           if (dutyCycle < 0.0f)
             dutyCycle = 0.0f;
-           sprintf(buffer, "Reducao do pwm em 6.25%%, Duty Cycle atual em %d\r\n",(int)dutyCycle);
-           CDC_Transmit_FS(buffer,strlen(buffer));
+           snprintf((char *)buffer, sizeof(buffer), "Reducao do PWM em 6.25%%, duty cycle atual em %d%%\r\n", (int)dutyCycle);
+           CDC_Transmit_FS(buffer, strlen((char *)buffer));
            break;
         }
         default:
         {
-          sprintf(buffer, "Nao entendir\r\n");
-          CDC_Transmit_FS(buffer,strlen(buffer));
+          snprintf((char *)buffer, sizeof(buffer), "Comando nao reconhecido\r\n");
+          CDC_Transmit_FS(buffer, strlen((char *)buffer));
           break;
         }
       }
       __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, (uint32_t)((dutyCycle / 100.0f) * __HAL_TIM_GET_AUTORELOAD(&htim2)));
-      memset(gUSB,0,255);
+      memset(gUSB, 0, sizeof(gUSB));
     }
   }
   //fim main loop
 }
 
 
-int readPin(int valorLido) {
+static void readPin(uint16_t valorLido)
+{
+    uint16_t leituraLimitada = valorLido;
+    uint32_t tensaoMv;
+    float porcentagem;
+    int parteInteira;
+    int parteDecimal;
 
-    // Calculando a porcentagem
-    porcentagem = (valorLido-minread)*0.030525;
+    if (leituraLimitada < ADC_MIN_READ)
+    {
+      leituraLimitada = ADC_MIN_READ;
+    }
+    else if (leituraLimitada > ADC_MAX_READ)
+    {
+      leituraLimitada = ADC_MAX_READ;
+    }
 
-    // Separando a parte inteira e a parte decimal
-    int parteInteira = (int)porcentagem;
-    int parteDecimal = ((porcentagem - parteInteira) * 100);
+    porcentagem = ((float)(leituraLimitada - ADC_MIN_READ) * 100.0f) /
+                  (float)(ADC_MAX_READ - ADC_MIN_READ);
+    tensaoMv = ((uint32_t)valorLido * ADC_REFERENCE_MV + (ADC_FULL_SCALE / 2U)) /
+               ADC_FULL_SCALE;
 
-    // Imprimindo a porcentagem usando printf
-    sprintf(buffer, "O percentual do fundo de escala A/D e %d.%d, representando uma tensao de %d mV \r\n", parteInteira,parteDecimal, valorLido);
-    CDC_Transmit_FS(buffer,strlen(buffer));
+    parteInteira = (int)porcentagem;
+    parteDecimal = (int)((porcentagem - (float)parteInteira) * 100.0f + 0.5f);
+    if (parteDecimal >= 100)
+    {
+      parteInteira++;
+      parteDecimal = 0;
+    }
+
+    snprintf((char *)buffer, sizeof(buffer),
+             "Percentual do fundo de escala A/D: %d.%02d%%; tensao: %lu mV\r\n",
+             parteInteira, parteDecimal, (unsigned long)tensaoMv);
+    CDC_Transmit_FS(buffer, strlen((char *)buffer));
 }
 
 void SystemClock_Config(void)
